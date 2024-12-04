@@ -1,7 +1,7 @@
 "use client";
 
-import { create } from 'zustand';
-import { auth, db } from '@/lib/firebase/config';
+import { create } from "zustand";
+import { auth, db } from "@/lib/firebase/config";
 import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
@@ -9,8 +9,8 @@ import {
   GoogleAuthProvider,
   signOut,
   User,
-} from 'firebase/auth';
-import { doc, setDoc, getDoc, updateDoc } from 'firebase/firestore';
+} from "firebase/auth";
+import { doc, setDoc, getDoc, updateDoc } from "firebase/firestore";
 
 interface UserData {
   uid: string;
@@ -28,7 +28,7 @@ interface AuthState {
   loading: boolean;
   error: string | null;
   signIn: (email: string, password: string) => Promise<void>;
-  signUp: (email: string, password: string, name: string) => Promise<void>;
+  signUp: (email: string, password: string, name: string) => Promise<UserData>;
   signInWithGoogle: () => Promise<void>;
   logout: () => Promise<void>;
   setUser: (user: UserData | null) => void;
@@ -36,16 +36,16 @@ interface AuthState {
 }
 
 const getUserData = async (user: User): Promise<UserData> => {
-  const userRef = doc(db, 'users', user.uid);
+  const userRef = doc(db, "users", user.uid);
   const userDoc = await getDoc(userRef);
   const now = Date.now();
-  
+
   if (userDoc.exists()) {
     const userData = userDoc.data() as UserData;
     await updateDoc(userRef, { lastLogin: now });
     return { ...userData, lastLogin: now };
   }
-  
+
   const userData: UserData = {
     uid: user.uid,
     email: user.email,
@@ -54,7 +54,7 @@ const getUserData = async (user: User): Promise<UserData> => {
     createdAt: now,
     lastLogin: now,
   };
-  
+
   await setDoc(userRef, userData);
   return userData;
 };
@@ -64,13 +64,16 @@ export const useAuthStore = create<AuthState>((set) => ({
   loading: false,
   error: null,
 
-  signIn: async (email: string, password: string) => {
+  signIn: async (email: string, password: string): Promise<void> => {
     try {
       set({ loading: true, error: null });
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const userData = await getUserData(userCredential.user);
       set({ user: userData, loading: false });
-      return userData; // Retourne les données utilisateur pour la redirection
     } catch (error) {
       set({ error: (error as Error).message, loading: false });
       throw error;
@@ -80,7 +83,11 @@ export const useAuthStore = create<AuthState>((set) => ({
   signUp: async (email: string, password: string, name: string) => {
     try {
       set({ loading: true, error: null });
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
       const now = Date.now();
       const userData: UserData = {
         uid: userCredential.user.uid,
@@ -89,7 +96,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         createdAt: now,
         lastLogin: now,
       };
-      await setDoc(doc(db, 'users', userCredential.user.uid), userData);
+      await setDoc(doc(db, "users", userCredential.user.uid), userData);
       set({ user: userData, loading: false });
       return userData; // Retourne les données utilisateur pour la redirection
     } catch (error) {
@@ -98,14 +105,13 @@ export const useAuthStore = create<AuthState>((set) => ({
     }
   },
 
-  signInWithGoogle: async () => {
+  signInWithGoogle: async (): Promise<void> => {
     try {
       set({ loading: true, error: null });
       const provider = new GoogleAuthProvider();
       const userCredential = await signInWithPopup(auth, provider);
       const userData = await getUserData(userCredential.user);
       set({ user: userData, loading: false });
-      return userData; // Retourne les données utilisateur pour la redirection
     } catch (error) {
       set({ error: (error as Error).message, loading: false });
       throw error;
@@ -128,17 +134,17 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   updateProfile: async (data: Partial<UserData>) => {
     const { user } = useAuthStore.getState();
-    if (!user) throw new Error('User not authenticated');
+    if (!user) throw new Error("User not authenticated");
 
     try {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         ...data,
         updatedAt: Date.now(),
       });
       set({ user: { ...user, ...data } });
     } catch (error) {
-      throw new Error('Failed to update profile');
+      throw new Error("Failed to update profile");
     }
   },
 }));

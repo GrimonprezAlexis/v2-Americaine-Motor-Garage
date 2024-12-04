@@ -1,13 +1,13 @@
 "use client";
 
-import { motion } from 'framer-motion';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Save, Trash2, Edit2, X, Loader2 } from 'lucide-react';
-import { Alert } from '@/components/ui/alert';
-import { ServicePricingHeader } from './ServicePricingHeader';
-import { useServicePricing } from '@/lib/hooks/useServicePricing';
-import confetti from 'canvas-confetti';
+import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Save, Trash2, Edit2, X, Loader2 } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
+import { ServicePricingHeader } from "./ServicePricingHeader";
+import { useServicePricing } from "@/hooks/useServicePricing";
+import confetti from "canvas-confetti";
 
 interface ServicePricingTableProps {
   category: string;
@@ -15,7 +15,11 @@ interface ServicePricingTableProps {
   title: string;
 }
 
-export function ServicePricingTable({ category, subcategory, title }: ServicePricingTableProps) {
+export function ServicePricingTable({
+  category,
+  subcategory,
+  title,
+}: ServicePricingTableProps) {
   const {
     filteredPrices,
     loading,
@@ -38,7 +42,7 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
     confetti({
       particleCount: 100,
       spread: 70,
-      origin: { y: 0.6 }
+      origin: { y: 0.6 },
     });
   };
 
@@ -81,8 +85,10 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
               <tr className="border-b border-gray-800 bg-gray-800/50">
                 <td className="py-3 px-4">
                   <Input
-                    value={editForm.service || ''}
-                    onChange={(e) => setEditForm({ ...editForm, service: e.target.value })}
+                    value={editForm.service || ""}
+                    onChange={(e) =>
+                      setEditForm({ ...editForm, service: e.target.value })
+                    }
                     placeholder="Nom de la prestation"
                     className="bg-gray-800 text-white"
                   />
@@ -91,13 +97,13 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
                   <Input
                     type="number"
                     step="0.01"
-                    value={editForm.priceHT || ''}
+                    value={editForm.priceHT || ""}
                     onChange={(e) => {
                       const ht = Number(e.target.value);
-                      setEditForm({ 
-                        ...editForm, 
+                      setEditForm({
+                        ...editForm,
                         priceHT: ht,
-                        priceTTC: calculateTTC(ht)
+                        priceTTC: calculateTTC(ht),
                       });
                     }}
                     placeholder="0.00"
@@ -105,7 +111,9 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
                   />
                 </td>
                 <td className="py-3 px-4 text-right text-gray-400">
-                  {editForm.priceHT ? `${calculateTTC(Number(editForm.priceHT)).toFixed(2)} €` : '-'}
+                  {editForm.priceHT
+                    ? `${calculateTTC(Number(editForm.priceHT)).toFixed(2)} €`
+                    : "-"}
                 </td>
                 <td className="py-3 px-4 text-right">
                   <Button
@@ -144,7 +152,9 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
             ) : !filteredPrices.length ? (
               <tr>
                 <td colSpan={4} className="py-8 text-center text-gray-400">
-                  {searchTerm ? 'Aucun résultat trouvé' : 'Aucun tarif enregistré'}
+                  {searchTerm
+                    ? "Aucun résultat trouvé"
+                    : "Aucun tarif enregistré"}
                 </td>
               </tr>
             ) : (
@@ -154,7 +164,9 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
                     {editingId === price.id ? (
                       <Input
                         value={editForm.service || price.service}
-                        onChange={(e) => setEditForm({ ...editForm, service: e.target.value })}
+                        onChange={(e) =>
+                          setEditForm({ ...editForm, service: e.target.value })
+                        }
                         className="bg-gray-800 text-white"
                       />
                     ) : (
@@ -172,7 +184,7 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
                           setEditForm({
                             ...editForm,
                             priceHT: ht,
-                            priceTTC: calculateTTC(ht)
+                            priceTTC: calculateTTC(ht),
                           });
                         }}
                         className="bg-gray-800 text-white text-right"
@@ -182,13 +194,13 @@ export function ServicePricingTable({ category, subcategory, title }: ServicePri
                     )}
                   </td>
                   <td className="py-3 px-4 text-right text-white">
-                    {editingId === price.id ? (
-                      editForm.priceHT ? 
-                      `${calculateTTC(Number(editForm.priceHT)).toFixed(2)} €` :
-                      `${price.priceTTC.toFixed(2)} €`
-                    ) : (
-                      `${price.priceTTC.toFixed(2)} €`
-                    )}
+                    {editingId === price.id
+                      ? editForm.priceHT
+                        ? `${calculateTTC(Number(editForm.priceHT)).toFixed(
+                            2
+                          )} €`
+                        : `${price.priceTTC.toFixed(2)} €`
+                      : `${price.priceTTC.toFixed(2)} €`}
                   </td>
                   <td className="py-3 px-4 text-right">
                     {editingId === price.id ? (

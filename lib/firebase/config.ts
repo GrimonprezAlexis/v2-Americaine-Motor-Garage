@@ -1,9 +1,9 @@
 "use client";
 
-import { initializeApp, getApps } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp, getApps, FirebaseApp } from "firebase/app";
+import { Auth, getAuth } from "firebase/auth";
+import { Firestore, getFirestore } from "firebase/firestore";
+import { FirebaseStorage, getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyCgb8YwThBMw0wD-qsr0Vgh8we9vSuruEA",
@@ -12,22 +12,22 @@ const firebaseConfig = {
   storageBucket: "americaineimport-d147b.firebasestorage.app",
   messagingSenderId: "274310009449",
   appId: "1:274310009449:web:dc571f35ea7bec66f348f8",
-  measurementId: "G-XLPLGTNNQ5"
+  measurementId: "G-XLPLGTNNQ5",
 };
 
-let app;
-let auth;
-let db;
-let storage;
+let app: FirebaseApp;
+let auth: Auth;
+let db: Firestore;
+let storage: FirebaseStorage;
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   try {
     app = !getApps().length ? initializeApp(firebaseConfig) : getApps()[0];
     auth = getAuth(app);
     db = getFirestore(app);
     storage = getStorage(app);
   } catch (error) {
-    console.error('Error initializing Firebase:', error);
+    console.error("Error initializing Firebase:", error);
   }
 }
 

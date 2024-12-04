@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from 'react';
-import { useDropzone } from 'react-dropzone';
-import { motion } from 'framer-motion';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { motion } from "framer-motion";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -13,13 +13,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Vehicle } from '@/types/vehicle';
-import { db, storage } from '@/lib/firebase/config';
-import { collection, addDoc, updateDoc, doc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
-import { X, Upload, Eye, Loader2 } from 'lucide-react';
-import { VehiclePreview } from './VehiclePreview';
-import confetti from 'canvas-confetti';
+import { Vehicle } from "@/types/vehicle";
+import { db, storage } from "@/lib/firebase/config";
+import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
+import {
+  ref,
+  uploadBytes,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+import { X, Upload, Eye, Loader2 } from "lucide-react";
+import { VehiclePreview } from "./VehiclePreview";
+import confetti from "canvas-confetti";
 
 interface VehicleFormProps {
   vehicle?: Vehicle | null;
@@ -27,48 +32,54 @@ interface VehicleFormProps {
   onCancel: () => void;
 }
 
-export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) {
+export function VehicleForm({
+  vehicle,
+  onSuccess,
+  onCancel,
+}: VehicleFormProps) {
   const [formData, setFormData] = useState<Partial<Vehicle>>(
     vehicle || {
-      title: '',
-      year: '',
-      price: '',
-      mileage: '',
-      fuel: '',
-      transmission: '',
-      engine: '',
-      power: '',
-      acceleration: '',
-      maxSpeed: '',
-      description: '',
+      title: "",
+      year: "",
+      price: "",
+      mileage: "",
+      fuel: "",
+      transmission: "",
+      engine: "",
+      power: "",
+      acceleration: "",
+      maxSpeed: "",
+      description: "",
       images: [],
     }
   );
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{ [key: string]: number }>({});
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
 
   const onDrop = async (acceptedFiles: File[]) => {
-    const uploadedUrls = [];
+    const uploadedUrls: string[] = [];
     for (const file of acceptedFiles) {
       const storageRef = ref(storage, `vehicles/${Date.now()}_${file.name}`);
-      
+
       // Create upload task
       const uploadTask = uploadBytes(storageRef, file);
-      
+
       // Track progress
-      setUploadProgress(prev => ({ ...prev, [file.name]: 0 }));
-      
+      setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+
       try {
         await uploadTask;
         const url = await getDownloadURL(storageRef);
         uploadedUrls.push(url);
-        
+
         // Update progress to complete
-        setUploadProgress(prev => ({ ...prev, [file.name]: 100 }));
+        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
       } catch (error) {
-        console.error('Error uploading file:', error);
-        setUploadProgress(prev => {
+        console.error("Error uploading file:", error);
+        setUploadProgress((prev) => {
           const newProgress = { ...prev };
           delete newProgress[file.name];
           return newProgress;
@@ -76,18 +87,18 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       }
     }
 
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      images: [...(prev.images || []), ...uploadedUrls]
+      images: [...(prev.images || []), ...uploadedUrls],
     }));
   };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: {
-      'image/*': ['.jpeg', '.jpg', '.png', '.webp']
+      "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
-    multiple: true
+    multiple: true,
   });
 
   const handleRemoveImage = async (url: string, index: number) => {
@@ -97,12 +108,12 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       await deleteObject(imageRef);
 
       // Update form data
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        images: prev.images?.filter((_, i) => i !== index)
+        images: prev.images?.filter((_, i) => i !== index),
       }));
     } catch (error) {
-      console.error('Error removing image:', error);
+      console.error("Error removing image:", error);
     }
   };
 
@@ -112,12 +123,12 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
 
     try {
       if (vehicle?.id) {
-        await updateDoc(doc(db, 'vehicles', vehicle.id), {
+        await updateDoc(doc(db, "vehicles", vehicle.id), {
           ...formData,
           updatedAt: Date.now(),
         });
       } else {
-        await addDoc(collection(db, 'vehicles'), {
+        await addDoc(collection(db, "vehicles"), {
           ...formData,
           createdAt: Date.now(),
           updatedAt: Date.now(),
@@ -126,11 +137,11 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       confetti({
         particleCount: 100,
         spread: 70,
-        origin: { y: 0.6 }
+        origin: { y: 0.6 },
       });
       onSuccess();
     } catch (error) {
-      console.error('Error saving vehicle:', error);
+      console.error("Error saving vehicle:", error);
     }
 
     setLoading(false);
@@ -152,10 +163,13 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-gray-900 rounded-xl p-8">
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-6 bg-gray-900 rounded-xl p-8"
+    >
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-white">
-          {vehicle ? 'Modifier le véhicule' : 'Nouveau véhicule'}
+          {vehicle ? "Modifier le véhicule" : "Nouveau véhicule"}
         </h2>
         <Button
           type="button"
@@ -195,7 +209,9 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
         <Input
           placeholder="Kilométrage"
           value={formData.mileage}
-          onChange={(e) => setFormData({ ...formData, mileage: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, mileage: e.target.value })
+          }
           className="bg-gray-800 text-white"
           required
         />
@@ -219,7 +235,9 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
 
         <Select
           value={formData.transmission}
-          onValueChange={(value) => setFormData({ ...formData, transmission: value })}
+          onValueChange={(value) =>
+            setFormData({ ...formData, transmission: value })
+          }
         >
           <SelectTrigger className="bg-gray-800 text-white">
             <SelectValue placeholder="Transmission" />
@@ -250,13 +268,17 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
         <Input
           placeholder="0-100 km/h (s)"
           value={formData.acceleration}
-          onChange={(e) => setFormData({ ...formData, acceleration: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, acceleration: e.target.value })
+          }
           className="bg-gray-800 text-white"
         />
         <Input
           placeholder="Vitesse max (km/h)"
           value={formData.maxSpeed}
-          onChange={(e) => setFormData({ ...formData, maxSpeed: e.target.value })}
+          onChange={(e) =>
+            setFormData({ ...formData, maxSpeed: e.target.value })
+          }
           className="bg-gray-800 text-white"
         />
       </div>
@@ -264,7 +286,9 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       <Textarea
         placeholder="Description"
         value={formData.description}
-        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+        onChange={(e) =>
+          setFormData({ ...formData, description: e.target.value })
+        }
         className="bg-gray-800 text-white min-h-[100px]"
         required
       />
@@ -272,14 +296,18 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
-          ${isDragActive ? 'border-blue-500 bg-blue-500/10' : 'border-gray-600 hover:border-gray-500'}`}
+          ${
+            isDragActive
+              ? "border-blue-500 bg-blue-500/10"
+              : "border-gray-600 hover:border-gray-500"
+          }`}
       >
         <input {...getInputProps()} />
         <Upload className="w-8 h-8 mx-auto mb-4 text-gray-400" />
         <p className="text-gray-400">
           {isDragActive
-            ? 'Déposez les images ici...'
-            : 'Glissez et déposez des images ou cliquez pour sélectionner'}
+            ? "Déposez les images ici..."
+            : "Glissez et déposez des images ou cliquez pour sélectionner"}
         </p>
       </div>
 
@@ -298,7 +326,10 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
       {formData.images && formData.images.length > 0 && (
         <div className="grid grid-cols-4 gap-4">
           {formData.images.map((image, index) => (
-            <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
+            <div
+              key={index}
+              className="relative aspect-square rounded-lg overflow-hidden"
+            >
               <img
                 src={image}
                 alt={`Vehicle preview ${index + 1}`}
@@ -334,10 +365,12 @@ export function VehicleForm({ vehicle, onSuccess, onCancel }: VehicleFormProps) 
           {loading ? (
             <>
               <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-              {vehicle ? 'Mise à jour...' : 'Publication...'}
+              {vehicle ? "Mise à jour..." : "Publication..."}
             </>
+          ) : vehicle ? (
+            "Mettre à jour"
           ) : (
-            vehicle ? 'Mettre à jour' : 'Publier'
+            "Publier"
           )}
         </Button>
       </div>

@@ -1,6 +1,8 @@
 export interface Vehicle {
   id: string;
   title: string;
+  make: string;
+  model: string;
   year: string;
   price: string;
   mileage: string;
