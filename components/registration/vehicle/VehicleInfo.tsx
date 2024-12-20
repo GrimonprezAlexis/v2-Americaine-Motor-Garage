@@ -7,7 +7,7 @@ import { formatPrice } from "@/lib/utils/format";
 
 interface VehicleInfoProps {
   vehicle: VehicleInfoType;
-  price: string;
+  price: string | number;
 }
 
 export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
@@ -38,12 +38,9 @@ export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
     >
       <div className="flex items-start gap-6">
         <div className="relative w-24 h-24 flex-shrink-0">
-          <VehicleImage
-            src={vehicle.AWN_url_image}
-            alt={vehicle.AWN_marque}
-          />
+          <VehicleImage src={vehicle.AWN_url_image} alt={vehicle.AWN_marque} />
         </div>
-        
+
         <div className="flex-1 space-y-4">
           <div>
             <h3 className="text-xl font-bold text-white">

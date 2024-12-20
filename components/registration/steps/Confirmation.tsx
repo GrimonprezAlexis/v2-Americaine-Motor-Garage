@@ -4,6 +4,10 @@ import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useAuthStore } from "@/store/authStore";
+import { useRegistrationStore } from "@/store/registrationStore";
+import { createRegistration } from "@/lib/api/registrationStore";
+import { generateRegistrationId } from "@/lib/utils/registration";
 import confetti from "canvas-confetti";
 
 interface ConfirmationProps {
@@ -11,13 +15,38 @@ interface ConfirmationProps {
 }
 
 export function Confirmation({ formData }: ConfirmationProps) {
+  const { user } = useAuthStore();
+  const registrationStore = useRegistrationStore();
+  const registrationId = generateRegistrationId();
+
   useEffect(() => {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-  }, []);
+    async function saveRegistration() {
+      if (!user) return;
+
+      try {
+        await createRegistration(user.uid, {
+          service: formData.service,
+          vehicleInfo: formData.vehicleInfo,
+          price: formData.price,
+          documents: {},
+        });
+
+        // Reset registration store after successful save
+        registrationStore.resetRegistration();
+
+        // Celebrate!
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 },
+        });
+      } catch (error) {
+        console.error("Error saving registration:", error);
+      }
+    }
+
+    saveRegistration();
+  }, [user, formData]);
 
   return (
     <motion.div
@@ -44,23 +73,19 @@ export function Confirmation({ formData }: ConfirmationProps) {
           Demande envoyée avec succès !
         </h2>
         <p className="text-gray-400 max-w-md mx-auto">
-          Votre demande de carte grise a été transmise. Vous recevrez un email de
-          confirmation avec les détails de votre demande.
+          Votre demande de carte grise a été transmise. Vous recevrez un email
+          de confirmation avec les détails de votre demande.
         </p>
       </div>
 
       <div className="bg-gray-900 rounded-xl p-6 max-w-sm mx-auto">
         <p className="text-gray-300 mb-2">Numéro de demande</p>
-        <p className="text-2xl font-mono text-white">
-          {Math.random().toString(36).substr(2, 9).toUpperCase()}
-        </p>
+        <p className="text-2xl font-mono text-white">{registrationId}</p>
       </div>
 
       <div className="flex justify-center gap-4">
         <Button asChild className="bg-blue-600 hover:bg-blue-700">
-          <a href="/profile?tab=requests">
-            Suivre ma demande
-          </a>
+          <a href="/profile?tab=requests">Suivre ma demande</a>
         </Button>
       </div>
     </motion.div>

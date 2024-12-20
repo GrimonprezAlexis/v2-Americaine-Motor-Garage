@@ -1,3 +1,23 @@
+export type RegistrationStatus =
+  | "pending" // En attente de traitement
+  | "processing" // En cours de traitement
+  | "completed" // Terminé
+  | "rejected"; // Rejeté
+
+export interface RegistrationDocument {
+  id: string;
+  userId: string;
+  status: RegistrationStatus;
+  service: string;
+  vehicleInfo: VehicleInfo;
+  price: number;
+  documents: {
+    [key: string]: string; // Document URLs
+  };
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface RegistrationPrice {
   y1: string;
   y2: string;

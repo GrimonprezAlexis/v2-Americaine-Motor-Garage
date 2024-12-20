@@ -1,41 +1,44 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useAuthStore } from '@/store/authStore';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { User, Mail, Phone, MapPin, FileText, LogOut } from 'lucide-react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase/config';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import { useAuthStore } from "@/store/authStore";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { User, Mail, Phone, MapPin, FileText, LogOut } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { doc, updateDoc } from "firebase/firestore";
+import { db } from "@/lib/firebase/config";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { RegistrationList } from "@/components/profile/RegistrationList";
 
 export default function ProfilePage() {
   const { user, logout } = useAuthStore();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState(searchParams.get('tab') || 'profile');
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "profile"
+  );
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
-    displayName: user?.displayName || '',
-    email: user?.email || '',
-    phone: user?.phone || '',
-    address: user?.address || '',
+    displayName: user?.displayName || "",
+    email: user?.email || "",
+    phone: user?.phone || "",
+    address: user?.address || "",
   });
 
   useEffect(() => {
-    const tab = searchParams.get('tab');
+    const tab = searchParams.get("tab");
     if (tab) {
       setActiveTab(tab);
     }
   }, [searchParams]);
 
   if (!user) {
-    router.push('/auth');
+    router.push("/auth");
     return null;
   }
 
@@ -46,7 +49,7 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
-      const userRef = doc(db, 'users', user.uid);
+      const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         displayName: formData.displayName,
         phone: formData.phone,
@@ -55,8 +58,8 @@ export default function ProfilePage() {
       });
       setSuccess(true);
     } catch (err) {
-      setError('Une erreur est survenue lors de la mise à jour du profil');
-      console.error('Error updating profile:', err);
+      setError("Une erreur est survenue lors de la mise à jour du profil");
+      console.error("Error updating profile:", err);
     } finally {
       setLoading(false);
     }
@@ -64,7 +67,7 @@ export default function ProfilePage() {
 
   const handleLogout = async () => {
     await logout();
-    router.push('/');
+    router.push("/");
   };
 
   return (
@@ -88,13 +91,23 @@ export default function ProfilePage() {
             </Button>
           </div>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <Tabs
+            value={activeTab}
+            onValueChange={setActiveTab}
+            className="space-y-6"
+          >
             <TabsList className="bg-gray-900">
-              <TabsTrigger value="profile" className="data-[state=active]:bg-blue-600">
+              <TabsTrigger
+                value="profile"
+                className="data-[state=active]:bg-blue-600"
+              >
                 <User className="w-4 h-4 mr-2" />
                 Profil
               </TabsTrigger>
-              <TabsTrigger value="requests" className="data-[state=active]:bg-blue-600">
+              <TabsTrigger
+                value="requests"
+                className="data-[state=active]:bg-blue-600"
+              >
                 <FileText className="w-4 h-4 mr-2" />
                 Mes demandes
               </TabsTrigger>
@@ -124,7 +137,10 @@ export default function ProfilePage() {
                         placeholder="Nom complet"
                         value={formData.displayName}
                         onChange={(e) =>
-                          setFormData({ ...formData, displayName: e.target.value })
+                          setFormData({
+                            ...formData,
+                            displayName: e.target.value,
+                          })
                         }
                         className="pl-10 bg-gray-800 border-gray-700 text-white"
                       />
@@ -170,7 +186,7 @@ export default function ProfilePage() {
                     className="w-full bg-blue-600 hover:bg-blue-700"
                     disabled={loading}
                   >
-                    {loading ? 'Mise à jour...' : 'Mettre à jour le profil'}
+                    {loading ? "Mise à jour..." : "Mettre à jour le profil"}
                   </Button>
                 </form>
               </div>
@@ -178,16 +194,7 @@ export default function ProfilePage() {
 
             <TabsContent value="requests">
               <div className="bg-gray-900 rounded-xl p-8">
-                <div className="text-center text-gray-400">
-                  <FileText className="w-12 h-12 mx-auto mb-4 text-gray-500" />
-                  <p>Aucune demande en cours</p>
-                  <Button
-                    onClick={() => router.push('/services/carte-grise')}
-                    className="mt-4 bg-blue-600 hover:bg-blue-700"
-                  >
-                    Démarrer une nouvelle demande
-                  </Button>
-                </div>
+                {user && <RegistrationList userId={user.uid} />}
               </div>
             </TabsContent>
           </Tabs>
