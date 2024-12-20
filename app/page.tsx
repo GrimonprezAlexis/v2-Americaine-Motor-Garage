@@ -14,32 +14,36 @@ export default function Home() {
       title: "À propos",
       description: "Notre histoire et notre équipe",
       href: "/a-propos",
-      image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
+       image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
+      //image: "@/img/IMG_1901.JPEG",
     },
     {
       title: "Services",
       description: "Nos prestations automobiles",
       href: "/services",
-      image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1000&q=80",
+      image:
+        "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1000&q=80",
     },
     {
       title: "Vente",
       description: "Importation et vente de véhicules",
       href: "/vente",
-      image: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=80",
+      image:
+        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=80",
     },
     {
       title: "Contact",
       description: "Nous contacter",
       href: "/contact",
-      image: "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1000&q=80",
+      image:
+        "https://images.unsplash.com/photo-1423666639041-f56000c27a9a?auto=format&fit=crop&w=1000&q=80",
     },
   ];
 
   return (
     <div className="min-h-screen bg-black">
       <main className="container mx-auto px-4 py-20">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
