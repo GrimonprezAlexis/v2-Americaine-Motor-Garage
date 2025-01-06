@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
-import { Car, Settings, Users, FileText } from 'lucide-react';
-import { AdminLogin } from '@/components/admin/AdminLogin';
-import { Button } from '@/components/ui/button';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { Car, Settings, Users, FileText } from "lucide-react";
+import { AdminLogin } from "@/components/admin/AdminLogin";
+import { Button } from "@/components/ui/button";
 
 export default function AdminPage() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -28,7 +28,7 @@ export default function AdminPage() {
       title: "Demandes Carte Grise",
       description: "Gérer les demandes de carte grise",
       icon: <FileText className="w-8 h-8 text-purple-500" />,
-      href: "/admin/registration",
+      href: "/admin/carte-grise",
     },
     {
       title: "Gestion Utilisateurs",
@@ -51,9 +51,7 @@ export default function AdminPage() {
           transition={{ duration: 0.8 }}
           className="max-w-6xl mx-auto"
         >
-          <h1 className="text-3xl font-bold text-white mb-8">
-            Administration
-          </h1>
+          <h1 className="text-3xl font-bold text-white mb-8">Administration</h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {adminSections.map((section, index) => (
@@ -72,9 +70,7 @@ export default function AdminPage() {
                     <h2 className="text-xl font-semibold text-white mb-2">
                       {section.title}
                     </h2>
-                    <p className="text-gray-400 mb-4">
-                      {section.description}
-                    </p>
+                    <p className="text-gray-400 mb-4">{section.description}</p>
                     <Button
                       onClick={() => router.push(section.href)}
                       className="w-full bg-blue-600 hover:bg-blue-700"

@@ -18,7 +18,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState(
-    searchParams.get("tab") || "profile"
+    searchParams?.get("tab") || "profile"
   );
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
@@ -31,16 +31,16 @@ export default function ProfilePage() {
   });
 
   useEffect(() => {
-    const tab = searchParams.get("tab");
+    if (!user) {
+      router.push("/auth");
+      return;
+    }
+
+    const tab = searchParams?.get("tab");
     if (tab) {
       setActiveTab(tab);
     }
-  }, [searchParams]);
-
-  if (!user) {
-    router.push("/auth");
-    return null;
-  }
+  }, [user, router, searchParams]);
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,6 +49,8 @@ export default function ProfilePage() {
     setSuccess(false);
 
     try {
+      if (!user) throw new Error("User not authenticated");
+
       const userRef = doc(db, "users", user.uid);
       await updateDoc(userRef, {
         displayName: formData.displayName,
@@ -69,6 +71,8 @@ export default function ProfilePage() {
     await logout();
     router.push("/");
   };
+
+  if (!user) return null;
 
   return (
     <div className="min-h-screen bg-black pt-20">

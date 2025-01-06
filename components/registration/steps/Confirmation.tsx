@@ -29,6 +29,7 @@ export function Confirmation({ formData }: ConfirmationProps) {
           vehicleInfo: formData.vehicleInfo,
           price: formData.price,
           documents: {},
+          userId: "",
         });
 
         // Reset registration store after successful save

@@ -12,6 +12,30 @@ import {
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { RegistrationDocument, RegistrationStatus } from "@/types/registration";
 
+export async function uploadRegistrationDocument(
+  documentType: string,
+  file: File
+): Promise<string> {
+  try {
+    // Create a reference with the document type in the path
+    const path = encodeURIComponent(
+      `documents/${documentType}/${Date.now()}_${file.name}`
+    );
+    const storageRef = ref(storage, path);
+
+    // Upload the file
+    await uploadBytes(storageRef, file);
+
+    // Get the download URL
+    const url = await getDownloadURL(storageRef);
+
+    return url;
+  } catch (error) {
+    console.error("Error uploading document:", error);
+    throw new Error("Failed to upload document");
+  }
+}
+
 export async function createRegistration(
   userId: string,
   data: Omit<RegistrationDocument, "id" | "status" | "createdAt" | "updatedAt">
@@ -26,26 +50,6 @@ export async function createRegistration(
 
   const docRef = await addDoc(collection(db, "registrations"), registration);
   return docRef.id;
-}
-
-export async function uploadRegistrationDocument(
-  registrationId: string,
-  documentType: string,
-  file: File
-): Promise<string> {
-  const path = `registrations/${registrationId}/${documentType}/${file.name}`;
-  const storageRef = ref(storage, path);
-
-  await uploadBytes(storageRef, file);
-  const url = await getDownloadURL(storageRef);
-
-  const registrationRef = doc(db, "registrations", registrationId);
-  await updateDoc(registrationRef, {
-    [`documents.${documentType}`]: url,
-    updatedAt: Date.now(),
-  });
-
-  return url;
 }
 
 export async function getUserRegistrations(userId: string) {
@@ -65,7 +69,7 @@ export async function getUserRegistrations(userId: string) {
 export async function updateRegistrationStatus(
   registrationId: string,
   status: RegistrationStatus
-) {
+): Promise<void> {
   const registrationRef = doc(db, "registrations", registrationId);
   await updateDoc(registrationRef, {
     status,

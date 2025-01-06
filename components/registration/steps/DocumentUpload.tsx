@@ -3,8 +3,15 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { Upload, ArrowRight, ArrowLeft, Check, AlertCircle } from "lucide-react";
+import {
+  Upload,
+  ArrowRight,
+  ArrowLeft,
+  Check,
+  AlertCircle,
+} from "lucide-react";
 import { useDropzone } from "react-dropzone";
+import { uploadRegistrationDocument } from "@/lib/api/registrationStore";
 
 interface DocumentUploadProps {
   formData: any;
@@ -17,7 +24,8 @@ const requiredDocuments = [
   {
     id: "identity",
     name: "Pièce d'identité",
-    description: "Carte d'identité, passeport ou titre de séjour en cours de validité",
+    description:
+      "Carte d'identité, passeport ou titre de séjour en cours de validité",
   },
   {
     id: "proof_address",
@@ -37,19 +45,42 @@ export function DocumentUpload({
   onNext,
   onBack,
 }: DocumentUploadProps) {
-  const [uploadedFiles, setUploadedFiles] = useState<Record<string, File[]>>({});
+  const [uploadedFiles, setUploadedFiles] = useState<Record<string, string[]>>(
+    {}
+  );
+  const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: (acceptedFiles, _, event) => {
-      const target = event.target as HTMLElement;
-      const documentId = target.closest("[data-document-id]")?.getAttribute("data-document-id");
-      
-      if (documentId) {
-        setUploadedFiles(prev => ({
-          ...prev,
-          [documentId]: [...(prev[documentId] || []), ...acceptedFiles]
-        }));
+    onDrop: async (acceptedFiles, _, event) => {
+      try {
+        const target = event.target as HTMLElement;
+        const documentId = target
+          .closest("[data-document-id]")
+          ?.getAttribute("data-document-id");
+
+        if (documentId) {
+          setUploading(true);
+          const urls = await Promise.all(
+            acceptedFiles.map((file) =>
+              uploadRegistrationDocument(documentId, file)
+            )
+          );
+          setUploadedFiles((prev) => ({
+            ...prev,
+            [documentId]: [...(prev[documentId] || []), ...urls],
+          }));
+          onUpdate({
+            documents: { ...formData.documents, [documentId]: urls },
+          });
+        } else {
+          throw new Error("Document ID not found");
+        }
+      } catch (error) {
+        setError("Erreur lors du téléchargement des fichiers");
+        console.error(error);
+      } finally {
+        setUploading(false);
       }
     },
     accept: {
@@ -62,15 +93,14 @@ export function DocumentUpload({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const allDocumentsUploaded = requiredDocuments.every(
-      doc => uploadedFiles[doc.id]?.length > 0
+      (doc) => uploadedFiles[doc.id]?.length > 0
     );
-    
-    if (!allDocumentsUploaded) {
-      setError("Veuillez télécharger tous les documents requis");
-      return;
-    }
-    
-    onUpdate({ documents: uploadedFiles });
+
+    // if (!allDocumentsUploaded) {
+    //   setError("Veuillez télécharger tous les documents requis");
+    //   return;
+    // }
+
     onNext();
   };
 
@@ -82,9 +112,7 @@ export function DocumentUpload({
     >
       <div className="text-center">
         <Upload className="w-12 h-12 mx-auto text-blue-500 mb-4" />
-        <h2 className="text-2xl font-bold text-white mb-2">
-          Documents requis
-        </h2>
+        <h2 className="text-2xl font-bold text-white mb-2">Documents requis</h2>
         <p className="text-gray-400">
           Téléchargez les documents nécessaires à votre demande
         </p>
@@ -113,9 +141,10 @@ export function DocumentUpload({
               <div
                 {...getRootProps()}
                 className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
-                  ${isDragActive
-                    ? "border-blue-500 bg-blue-500/10"
-                    : "border-gray-600 hover:border-gray-500"
+                  ${
+                    isDragActive
+                      ? "border-blue-500 bg-blue-500/10"
+                      : "border-gray-600 hover:border-gray-500"
                   }`}
               >
                 <input {...getInputProps()} />
@@ -137,9 +166,7 @@ export function DocumentUpload({
           ))}
         </div>
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         <div className="flex justify-between gap-4">
           <Button
@@ -147,6 +174,7 @@ export function DocumentUpload({
             variant="outline"
             onClick={onBack}
             className="flex-1 bg-gray-800 hover:bg-gray-700"
+            disabled={uploading}
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
             Retour
@@ -154,8 +182,9 @@ export function DocumentUpload({
           <Button
             type="submit"
             className="flex-1 bg-blue-600 hover:bg-blue-700"
+            disabled={uploading}
           >
-            Continuer
+            {uploading ? "Téléchargement..." : "Continuer"}
             <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </div>

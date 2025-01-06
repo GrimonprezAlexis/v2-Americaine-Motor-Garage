@@ -11,7 +11,7 @@ interface RegistrationState {
   plateNumber: string;
   vehicleInfo?: VehicleInfo;
   price?: number;
-  documents?: Record<string, File[]>;
+  documents: Record<string, string[]>;
   setStep: (step: number) => void;
   updateRegistration: (data: Partial<RegistrationState>) => void;
   resetRegistration: () => void;
@@ -22,6 +22,7 @@ const initialState = {
   service: "",
   postalCode: "",
   plateNumber: "",
+  documents: {},
 };
 
 export const useRegistrationStore = create<RegistrationState>()(

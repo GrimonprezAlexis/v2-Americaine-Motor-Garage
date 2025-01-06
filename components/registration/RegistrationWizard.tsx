@@ -11,8 +11,6 @@ import { ProgressSteps } from "./ProgressSteps";
 import { useAuthStore } from "@/store/authStore";
 import { useRegistrationStore } from "@/store/registrationStore";
 import { AuthRedirect } from "@/components/auth/AuthRedirect";
-import { Button } from "@/components/ui/button";
-import { LogIn } from "lucide-react";
 
 const steps = [
   "Sélection du service",
