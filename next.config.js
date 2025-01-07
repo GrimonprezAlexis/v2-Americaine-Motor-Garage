@@ -25,8 +25,8 @@ const nextConfig = {
     ]
   },
   env: {
-    AWS_REGION: process.env.AWS_REGION,
-    AWS_S3_BUCKET: process.env.AWS_S3_BUCKET
+    AWS_REGION: process.env.NEXT_PUBLIC_AWS_REGION,
+    AWS_S3_BUCKET: process.env.NEXT_PUBLIC_AWS_S3_BUCKET
   },
   experimental: {
     appDir: true

@@ -1,44 +1,41 @@
-import {
-  S3Client,
-  PutObjectCommand,
-  GetObjectCommand,
-} from "@aws-sdk/client-s3";
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 
+// Initialize S3 client with proper configuration
 const s3Client = new S3Client({
-  region: process.env.AWS_REGION || "eu-west-3",
+  region: process.env.AWS_REGION,
   credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID || "eu-west-3",
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
   },
 });
 
-const BUCKET_NAME = process.env.AWS_S3_BUCKET || "americaine-motor-documents";
-
 export async function uploadToS3(file: File, path: string): Promise<string> {
   try {
-    const fileBuffer = await file.arrayBuffer();
-    const key = `${path}/${Date.now()}_${file.name}`;
+    const key = `${path}/${Date.now()}_${encodeURIComponent(file.name)}`;
 
-    const command = new PutObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
-      Body: Buffer.from(fileBuffer),
-      ContentType: file.type,
+    // Get a presigned URL from your server
+    const res = await fetch("/api/generatePresignedUrl", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ key, contentType: file.type }),
     });
 
-    await s3Client.send(command);
+    const { url } = await res.json();
 
-    // Generate a signed URL for reading the file
-    const getCommand = new GetObjectCommand({
-      Bucket: BUCKET_NAME,
-      Key: key,
+    // Upload the file using the presigned URL
+    const uploadResponse = await fetch(url, {
+      method: "PUT",
+      headers: { "Content-Type": file.type },
+      body: file,
     });
 
-    const url = await getSignedUrl(s3Client, getCommand, { expiresIn: 3600 });
-    return url;
+    if (!uploadResponse.ok) {
+      throw new Error("Upload failed");
+    }
+
+    return `https://${process.env.NEXT_PUBLIC_AWS_S3_BUCKET}.s3.${process.env.AWS_REGION}.amazonaws.com/${key}`;
   } catch (error) {
     console.error("Error uploading to S3:", error);
-    throw new Error("Failed to upload file");
+    throw error;
   }
 }

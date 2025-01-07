@@ -18,6 +18,7 @@ export async function uploadRegistrationDocument(
   file: File
 ): Promise<string> {
   try {
+    console.log(">> uploadToS3", file, registrationId, documentType);
     // Upload to S3 with path including registration ID
     const url = await uploadToS3(
       file,
