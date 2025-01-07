@@ -7,32 +7,36 @@ import { Wrench, Car, FileText, Calendar } from "lucide-react";
 export default function ServicesPage() {
   const services = [
     {
+      title: "Service Carte Grise",
+      description: "Gestion complète de vos démarches administratives",
+      icon: <FileText className="w-12 h-12" />,
+      href: "/services/carte-grise",
+      image:
+        "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80",
+    },
+    {
       title: "Réparations / Entretien",
       description: "Service multimarques spécialisé véhicules américains",
       icon: <Wrench className="w-12 h-12" />,
       href: "/services/reparation",
-      image: "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80",
+      image:
+        "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80",
     },
     {
       title: "Vente / Importation",
       description: "Import clé en main USA/CANADA/EUROPE",
       icon: <Car className="w-12 h-12" />,
       href: "/services/vente",
-      image: "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80",
-    },
-    {
-      title: "Service Carte Grise",
-      description: "Gestion complète de vos démarches administratives",
-      icon: <FileText className="w-12 h-12" />,
-      href: "/services/carte-grise",
-      image: "https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?auto=format&fit=crop&w=1200&q=80",
+      image:
+        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80",
     },
     {
       title: "Location événement",
       description: "À venir en 2025 - Location de véhicules d'exception",
       icon: <Calendar className="w-12 h-12" />,
       href: "/services/location",
-      image: "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1200&q=80",
+      image:
+        "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1200&q=80",
       comingSoon: true,
     },
   ];
@@ -68,7 +72,7 @@ export default function ServicesPage() {
                   style={{ backgroundImage: `url(${service.image})` }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent opacity-80 group-hover:opacity-70 transition-opacity duration-500" />
-                
+
                 <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-white">
                   <div className="mb-4 transform transition-transform duration-500 group-hover:scale-110">
                     {service.icon}

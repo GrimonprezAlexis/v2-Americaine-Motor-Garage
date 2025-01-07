@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -12,7 +12,11 @@ import {
   Loader2,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { uploadRegistrationDocument } from "@/lib/api/registrationStorage";
+import {
+  uploadRegistrationDocument,
+  createRegistration,
+} from "@/lib/api/registrationStorage";
+import { useAuthStore } from "@/store/authStore";
 
 interface DocumentUploadProps {
   formData: any;
@@ -46,52 +50,65 @@ export function DocumentUpload({
   onNext,
   onBack,
 }: DocumentUploadProps) {
+  const { user } = useAuthStore();
+  const [registrationId, setRegistrationId] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, string[]>>(
     {}
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
-  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(
-    null
-  );
 
-  const {
-    getRootProps: getDropzoneProps,
-    getInputProps,
-    isDragActive,
-  } = useDropzone({
-    onDrop: async (acceptedFiles) => {
-      if (!currentDocumentId) return;
+  useEffect(() => {
+    const initializeRegistration = async () => {
+      if (!user) return;
 
-      setUploading(true);
       try {
-        const urls = await Promise.all(
-          acceptedFiles.map((file) =>
-            uploadRegistrationDocument(formData.id, currentDocumentId, file)
-          )
-        );
-
-        setUploadedFiles((prev) => ({
-          ...prev,
-          [currentDocumentId]: [...(prev[currentDocumentId] || []), ...urls],
-        }));
-
-        onUpdate({
-          documents: { ...formData.documents, [currentDocumentId]: urls },
+        const id = await createRegistration(user.uid, {
+          service: formData.service,
+          vehicleInfo: formData.vehicleInfo,
+          price: formData.price,
+          documents: {},
+          userId: user.uid,
         });
+        setRegistrationId(id);
       } catch (error) {
-        setError("Erreur lors du téléchargement des fichiers");
-        console.error(error);
-      } finally {
-        setUploading(false);
+        console.error("Error creating registration:", error);
+        setError("Erreur lors de l'initialisation de la demande");
       }
-    },
-    accept: {
-      "image/*": [".jpeg", ".jpg", ".png"],
-      "application/pdf": [".pdf"],
-    },
-    maxSize: 5 * 1024 * 1024, // 5MB
-  });
+    };
+
+    initializeRegistration();
+  }, [user, formData]);
+
+  const handleDrop = async (documentId: string, acceptedFiles: File[]) => {
+    if (!registrationId) {
+      setError("Erreur: ID de demande non disponible");
+      return;
+    }
+
+    setUploading(true);
+    setError("");
+
+    try {
+      const urls = await Promise.all(
+        acceptedFiles.map((file) =>
+          uploadRegistrationDocument(registrationId, documentId, file)
+        )
+      );
+
+      setUploadedFiles((prev) => ({
+        ...prev,
+        [documentId]: [...(prev[documentId] || []), ...urls],
+      }));
+
+      onUpdate({ documents: { ...uploadedFiles, [documentId]: urls } });
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      setError("Erreur lors du téléchargement des fichiers");
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,48 +140,58 @@ export function DocumentUpload({
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
-          {requiredDocuments.map((doc) => (
-            <div key={doc.id} className="bg-gray-800 rounded-lg p-4">
-              <div className="flex items-start justify-between mb-4">
-                <div>
-                  <h3 className="text-white font-medium">{doc.name}</h3>
-                  <p className="text-sm text-gray-400">{doc.description}</p>
+          {requiredDocuments.map((doc) => {
+            const { getRootProps, getInputProps, isDragActive } = useDropzone({
+              onDrop: (files) => handleDrop(doc.id, files),
+              accept: {
+                "image/*": [".jpeg", ".jpg", ".png"],
+                "application/pdf": [".pdf"],
+              },
+              maxSize: 5 * 1024 * 1024, // 5MB
+              multiple: true,
+            });
+
+            return (
+              <div key={doc.id} className="bg-gray-800 rounded-lg p-4">
+                <div className="flex items-start justify-between mb-4">
+                  <div>
+                    <h3 className="text-white font-medium">{doc.name}</h3>
+                    <p className="text-sm text-gray-400">{doc.description}</p>
+                  </div>
+                  {uploadedFiles[doc.id]?.length > 0 ? (
+                    <Check className="w-5 h-5 text-green-500" />
+                  ) : (
+                    <AlertCircle className="w-5 h-5 text-yellow-500" />
+                  )}
                 </div>
-                {uploadedFiles[doc.id]?.length > 0 ? (
-                  <Check className="w-5 h-5 text-green-500" />
-                ) : (
-                  <AlertCircle className="w-5 h-5 text-yellow-500" />
-                )}
-              </div>
 
-              <div
-                {...getDropzoneProps({
-                  onClick: () => setCurrentDocumentId(doc.id),
-                })}
-                className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
-                  ${
-                    isDragActive
-                      ? "border-blue-500 bg-blue-500/10"
-                      : "border-gray-600 hover:border-gray-500"
-                  }`}
-              >
-                <input {...getInputProps()} />
-                <p className="text-sm text-gray-400">
-                  {isDragActive
-                    ? "Déposez les fichiers ici..."
-                    : "Glissez et déposez vos fichiers ou cliquez pour sélectionner"}
-                </p>
-              </div>
-
-              {uploadedFiles[doc.id]?.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm text-green-500">
-                    {uploadedFiles[doc.id].length} fichier(s) téléchargé(s)
+                <div
+                  {...getRootProps()}
+                  className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
+                    ${
+                      isDragActive
+                        ? "border-blue-500 bg-blue-500/10"
+                        : "border-gray-600 hover:border-gray-500"
+                    }`}
+                >
+                  <input {...getInputProps()} />
+                  <p className="text-sm text-gray-400">
+                    {isDragActive
+                      ? "Déposez les fichiers ici..."
+                      : "Glissez et déposez vos fichiers ou cliquez pour sélectionner"}
                   </p>
                 </div>
-              )}
-            </div>
-          ))}
+
+                {uploadedFiles[doc.id]?.length > 0 && (
+                  <div className="mt-2">
+                    <p className="text-sm text-green-500">
+                      {uploadedFiles[doc.id].length} fichier(s) téléchargé(s)
+                    </p>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {error && <p className="text-red-500 text-sm text-center">{error}</p>}
