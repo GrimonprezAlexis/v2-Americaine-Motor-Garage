@@ -2,19 +2,21 @@
 
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { Users, Wrench, Trophy } from "lucide-react";
+import { Users, Wrench, Trophy, Heart } from "lucide-react";
 
 export default function AboutPage() {
   const team = [
     {
       name: "Andrey",
       role: "Fondateur & Expert Technique",
-      image: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },
     {
       name: "Marc",
       role: "Mécanicien Spécialiste",
-      image: "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80",
+      image:
+        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80",
     },
   ];
 
@@ -45,11 +47,44 @@ export default function AboutPage() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">Notre Histoire</h1>
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Notre Histoire
+          </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Passionnés par l'automobile américaine, nous avons créé Americaine Motor pour partager 
-            notre expertise et offrir un service d'excellence aux amateurs de véhicules d'exception.
+            Fondé en 2020, notre garage est né d'une passion authentique pour
+            l'automobile et d'une expertise unique dans les véhicules
+            américains.
           </p>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, delay: 0.2 }}
+          className="bg-gray-900 rounded-xl p-8 mb-16"
+        >
+          <div className="max-w-3xl mx-auto space-y-6 text-gray-300 leading-relaxed">
+            <p>
+              Très jeune, notre fondateur Andrey a nourri un amour profond pour
+              les véhicules et s'est naturellement orienté vers des études de
+              mécanique, transformant sa passion en une expertise solide.
+            </p>
+            <p>
+              Son parcours l'a mené au Canada, où il a vécu et travaillé pendant
+              plusieurs années. C'est là qu'il a découvert et développé une
+              fascination particulière pour les marques américaines, acquérant
+              une maîtrise approfondie des spécificités techniques et
+              esthétiques des véhicules emblématiques d'outre-Atlantique.
+            </p>
+            <p>
+              De retour en France, ce qui a commencé comme une simple activité
+              d'importation de voitures américaines s'est rapidement transformé
+              en une aventure entrepreneuriale passionnante. Au fil du temps,
+              notre garage a évolué, notre réputation s'est bâtie, et nous avons
+              élargi nos services tout en renforçant notre équipe avec des
+              co-gérants, des salariés et des apprentis.
+            </p>
+          </div>
         </motion.section>
 
         <section className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
@@ -62,7 +97,9 @@ export default function AboutPage() {
               className="bg-gray-900 rounded-xl p-8 text-center"
             >
               <div className="flex justify-center mb-4">{achievement.icon}</div>
-              <h3 className="text-2xl font-bold text-white mb-2">{achievement.title}</h3>
+              <h3 className="text-2xl font-bold text-white mb-2">
+                {achievement.title}
+              </h3>
               <p className="text-gray-400">{achievement.description}</p>
             </motion.div>
           ))}
@@ -74,7 +111,9 @@ export default function AboutPage() {
           transition={{ duration: 0.8 }}
           className="mb-20"
         >
-          <h2 className="text-3xl font-bold text-white text-center mb-12">Notre Équipe</h2>
+          <h2 className="text-3xl font-bold text-white text-center mb-12">
+            Notre Équipe
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {team.map((member, index) => (
               <motion.div
@@ -93,7 +132,9 @@ export default function AboutPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent" />
                   <div className="absolute bottom-0 left-0 right-0 p-6">
-                    <h3 className="text-2xl font-bold text-white mb-2">{member.name}</h3>
+                    <h3 className="text-2xl font-bold text-white mb-2">
+                      {member.name}
+                    </h3>
                     <p className="text-gray-300">{member.role}</p>
                   </div>
                 </div>
@@ -106,12 +147,18 @@ export default function AboutPage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="text-center"
+          className="text-center bg-gray-900 rounded-xl p-8"
         >
-          <h2 className="text-3xl font-bold text-white mb-6">Notre Engagement</h2>
+          <Heart className="w-12 h-12 text-blue-500 mx-auto mb-6" />
+          <h2 className="text-3xl font-bold text-white mb-6">
+            Notre Engagement
+          </h2>
           <p className="text-gray-400 max-w-3xl mx-auto">
-            Nous nous engageons à fournir un service personnalisé et professionnel, 
-            en mettant notre expertise au service de votre passion pour les véhicules américains.
+            Aujourd'hui, notre garage incarne cet amour pour l'automobile et un
+            savoir-faire unique. Nous sommes fiers de proposer une large gamme
+            de services, allant de la vente à l'entretien, en passant par la
+            réparation et la personnalisation de véhicules toutes marques
+            confondues.
           </p>
         </motion.section>
       </main>
