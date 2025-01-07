@@ -6,7 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useAuthStore } from "@/store/authStore";
 import { useRegistrationStore } from "@/store/registrationStore";
-import { createRegistration } from "@/lib/api/registrationStore";
+import { createRegistration } from "@/lib/api/registrationStorage";
 import { generateRegistrationId } from "@/lib/utils/registration";
 import confetti from "canvas-confetti";
 

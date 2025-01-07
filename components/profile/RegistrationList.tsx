@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { getUserRegistrations } from "@/lib/api/registrationStore";
+import { getUserRegistrations } from "@/lib/api/registrationStorage";
 import { RegistrationDocument } from "@/types/registration";
 import { Button } from "@/components/ui/button";
 import { Loader2, ArrowRight } from "lucide-react";

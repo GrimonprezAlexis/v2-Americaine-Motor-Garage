@@ -4,14 +4,15 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
-  Upload,
   ArrowRight,
   ArrowLeft,
+  Upload,
   Check,
   AlertCircle,
+  Loader2,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import { uploadRegistrationDocument } from "@/lib/api/registrationStore";
+import { uploadRegistrationDocument } from "@/lib/api/registrationStorage";
 
 interface DocumentUploadProps {
   formData: any;
@@ -50,32 +51,34 @@ export function DocumentUpload({
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
+  const [currentDocumentId, setCurrentDocumentId] = useState<string | null>(
+    null
+  );
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop: async (acceptedFiles, _, event) => {
+  const {
+    getRootProps: getDropzoneProps,
+    getInputProps,
+    isDragActive,
+  } = useDropzone({
+    onDrop: async (acceptedFiles) => {
+      if (!currentDocumentId) return;
+
+      setUploading(true);
       try {
-        const target = event.target as HTMLElement;
-        const documentId = target
-          .closest("[data-document-id]")
-          ?.getAttribute("data-document-id");
+        const urls = await Promise.all(
+          acceptedFiles.map((file) =>
+            uploadRegistrationDocument(formData.id, currentDocumentId, file)
+          )
+        );
 
-        if (documentId) {
-          setUploading(true);
-          const urls = await Promise.all(
-            acceptedFiles.map((file) =>
-              uploadRegistrationDocument(documentId, file)
-            )
-          );
-          setUploadedFiles((prev) => ({
-            ...prev,
-            [documentId]: [...(prev[documentId] || []), ...urls],
-          }));
-          onUpdate({
-            documents: { ...formData.documents, [documentId]: urls },
-          });
-        } else {
-          throw new Error("Document ID not found");
-        }
+        setUploadedFiles((prev) => ({
+          ...prev,
+          [currentDocumentId]: [...(prev[currentDocumentId] || []), ...urls],
+        }));
+
+        onUpdate({
+          documents: { ...formData.documents, [currentDocumentId]: urls },
+        });
       } catch (error) {
         setError("Erreur lors du téléchargement des fichiers");
         console.error(error);
@@ -96,10 +99,10 @@ export function DocumentUpload({
       (doc) => uploadedFiles[doc.id]?.length > 0
     );
 
-    // if (!allDocumentsUploaded) {
-    //   setError("Veuillez télécharger tous les documents requis");
-    //   return;
-    // }
+    if (!allDocumentsUploaded) {
+      setError("Veuillez télécharger tous les documents requis");
+      return;
+    }
 
     onNext();
   };
@@ -121,11 +124,7 @@ export function DocumentUpload({
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="space-y-4">
           {requiredDocuments.map((doc) => (
-            <div
-              key={doc.id}
-              className="bg-gray-800 rounded-lg p-4"
-              data-document-id={doc.id}
-            >
+            <div key={doc.id} className="bg-gray-800 rounded-lg p-4">
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <h3 className="text-white font-medium">{doc.name}</h3>
@@ -139,7 +138,9 @@ export function DocumentUpload({
               </div>
 
               <div
-                {...getRootProps()}
+                {...getDropzoneProps({
+                  onClick: () => setCurrentDocumentId(doc.id),
+                })}
                 className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
                   ${
                     isDragActive
@@ -184,8 +185,17 @@ export function DocumentUpload({
             className="flex-1 bg-blue-600 hover:bg-blue-700"
             disabled={uploading}
           >
-            {uploading ? "Téléchargement..." : "Continuer"}
-            <ArrowRight className="w-4 h-4 ml-2" />
+            {uploading ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Téléchargement...
+              </>
+            ) : (
+              <>
+                Continuer
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </>
+            )}
           </Button>
         </div>
       </form>

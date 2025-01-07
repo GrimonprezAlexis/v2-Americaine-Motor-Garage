@@ -11,9 +11,7 @@ export interface RegistrationDocument {
   service: string;
   vehicleInfo: VehicleInfo;
   price: number;
-  documents: {
-    [key: string]: string; // Document URLs
-  };
+  documents: Record<string, string>; // Map of document type to S3 URL
   createdAt: number;
   updatedAt: number;
 }

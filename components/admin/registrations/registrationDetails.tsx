@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RegistrationDocument, RegistrationStatus } from "@/types/registration";
-import { updateRegistrationStatus } from "@/lib/api/registrationStore";
+import { updateRegistrationStatus } from "@/lib/api/registrationStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {

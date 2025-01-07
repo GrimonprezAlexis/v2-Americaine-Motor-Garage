@@ -1,4 +1,4 @@
-import { db, storage } from "@/lib/firebase/config";
+import { db } from "@/lib/firebase/config";
 import {
   collection,
   addDoc,
@@ -9,25 +9,27 @@ import {
   orderBy,
   getDocs,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { uploadToS3 } from "./s3";
 import { RegistrationDocument, RegistrationStatus } from "@/types/registration";
 
 export async function uploadRegistrationDocument(
+  registrationId: string,
   documentType: string,
   file: File
 ): Promise<string> {
   try {
-    // Create a reference with the document type in the path
-    const path = encodeURIComponent(
-      `documents/${documentType}/${Date.now()}_${file.name}`
+    // Upload to S3 with path including registration ID
+    const url = await uploadToS3(
+      file,
+      `registrations/${registrationId}/${documentType}`
     );
-    const storageRef = ref(storage, path);
 
-    // Upload the file
-    await uploadBytes(storageRef, file);
-
-    // Get the download URL
-    const url = await getDownloadURL(storageRef);
+    // Update registration document in Firestore
+    const registrationRef = doc(db, "registrations", registrationId);
+    await updateDoc(registrationRef, {
+      [`documents.${documentType}`]: url,
+      updatedAt: Date.now(),
+    });
 
     return url;
   } catch (error) {
