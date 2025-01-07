@@ -6,23 +6,13 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Vehicle } from "@/types/vehicle";
-import { db, storage } from "@/lib/firebase/config";
-import { collection, addDoc, updateDoc, doc } from "firebase/firestore";
 import {
-  ref,
-  uploadBytes,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
-import { X, Upload, Eye, Loader2 } from "lucide-react";
+  createVehicle,
+  updateVehicle,
+  uploadVehicleImage,
+} from "@/lib/api/vehicleStorage";
+import { X, Upload, Eye, Loader2, Image as ImageIcon } from "lucide-react";
 import { VehiclePreview } from "./VehiclePreview";
 import confetti from "canvas-confetti";
 
@@ -40,6 +30,8 @@ export function VehicleForm({
   const [formData, setFormData] = useState<Partial<Vehicle>>(
     vehicle || {
       title: "",
+      make: "",
+      model: "",
       year: "",
       price: "",
       mileage: "",
@@ -55,67 +47,45 @@ export function VehicleForm({
   );
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState<{
-    [key: string]: number;
-  }>({});
-
-  const onDrop = async (acceptedFiles: File[]) => {
-    const uploadedUrls: string[] = [];
-    for (const file of acceptedFiles) {
-      const storageRef = ref(storage, `vehicles/${Date.now()}_${file.name}`);
-
-      // Create upload task
-      const uploadTask = uploadBytes(storageRef, file);
-
-      // Track progress
-      setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
-
-      try {
-        await uploadTask;
-        const url = await getDownloadURL(storageRef);
-        uploadedUrls.push(url);
-
-        // Update progress to complete
-        setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
-      } catch (error) {
-        console.error("Error uploading file:", error);
-        setUploadProgress((prev) => {
-          const newProgress = { ...prev };
-          delete newProgress[file.name];
-          return newProgress;
-        });
-      }
-    }
-
-    setFormData((prev) => ({
-      ...prev,
-      images: [...(prev.images || []), ...uploadedUrls],
-    }));
-  };
+  const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
+    {}
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
     accept: {
       "image/*": [".jpeg", ".jpg", ".png", ".webp"],
     },
     multiple: true,
+    onDrop: async (acceptedFiles) => {
+      setLoading(true);
+      try {
+        const vehicleId = vehicle?.id || (await createVehicle(formData));
+        const uploadedUrls = await Promise.all(
+          acceptedFiles.map(async (file) => {
+            setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
+            const url = await uploadVehicleImage(vehicleId, file);
+            setUploadProgress((prev) => ({ ...prev, [file.name]: 100 }));
+            return url;
+          })
+        );
+
+        setFormData((prev) => ({
+          ...prev,
+          images: [...(prev.images || []), ...uploadedUrls],
+        }));
+
+        confetti({
+          particleCount: 50,
+          spread: 30,
+          origin: { y: 0.6 },
+        });
+      } catch (error) {
+        console.error("Error uploading images:", error);
+      } finally {
+        setLoading(false);
+      }
+    },
   });
-
-  const handleRemoveImage = async (url: string, index: number) => {
-    try {
-      // Delete from Storage
-      const imageRef = ref(storage, url);
-      await deleteObject(imageRef);
-
-      // Update form data
-      setFormData((prev) => ({
-        ...prev,
-        images: prev.images?.filter((_, i) => i !== index),
-      }));
-    } catch (error) {
-      console.error("Error removing image:", error);
-    }
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,28 +93,23 @@ export function VehicleForm({
 
     try {
       if (vehicle?.id) {
-        await updateDoc(doc(db, "vehicles", vehicle.id), {
-          ...formData,
-          updatedAt: Date.now(),
-        });
+        await updateVehicle(vehicle.id, formData);
       } else {
-        await addDoc(collection(db, "vehicles"), {
-          ...formData,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-        });
+        await createVehicle(formData);
       }
+
       confetti({
         particleCount: 100,
         spread: 70,
         origin: { y: 0.6 },
       });
+
       onSuccess();
     } catch (error) {
       console.error("Error saving vehicle:", error);
+    } finally {
+      setLoading(false);
     }
-
-    setLoading(false);
   };
 
   if (preview && formData) {
@@ -167,6 +132,7 @@ export function VehicleForm({
       onSubmit={handleSubmit}
       className="space-y-6 bg-gray-900 rounded-xl p-8"
     >
+      {/* Form header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-white">
           {vehicle ? "Modifier le véhicule" : "Nouveau véhicule"}
@@ -181,9 +147,10 @@ export function VehicleForm({
         </Button>
       </div>
 
+      {/* Basic info */}
       <div className="grid grid-cols-2 gap-4">
         <Input
-          placeholder="Nom du véhicule"
+          placeholder="Titre"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           className="bg-gray-800 text-white"
@@ -198,57 +165,25 @@ export function VehicleForm({
         />
       </div>
 
+      {/* Vehicle details */}
       <div className="grid grid-cols-2 gap-4">
         <Input
-          placeholder="Prix"
-          value={formData.price}
-          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+          placeholder="Marque"
+          value={formData.make}
+          onChange={(e) => setFormData({ ...formData, make: e.target.value })}
           className="bg-gray-800 text-white"
           required
         />
         <Input
-          placeholder="Kilométrage"
-          value={formData.mileage}
-          onChange={(e) =>
-            setFormData({ ...formData, mileage: e.target.value })
-          }
+          placeholder="Modèle"
+          value={formData.model}
+          onChange={(e) => setFormData({ ...formData, model: e.target.value })}
           className="bg-gray-800 text-white"
           required
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        <Select
-          value={formData.fuel}
-          onValueChange={(value) => setFormData({ ...formData, fuel: value })}
-        >
-          <SelectTrigger className="bg-gray-800 text-white">
-            <SelectValue placeholder="Carburant" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="essence">Essence</SelectItem>
-            <SelectItem value="diesel">Diesel</SelectItem>
-            <SelectItem value="hybride">Hybride</SelectItem>
-            <SelectItem value="electrique">Électrique</SelectItem>
-          </SelectContent>
-        </Select>
-
-        <Select
-          value={formData.transmission}
-          onValueChange={(value) =>
-            setFormData({ ...formData, transmission: value })
-          }
-        >
-          <SelectTrigger className="bg-gray-800 text-white">
-            <SelectValue placeholder="Transmission" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="manuelle">Manuelle</SelectItem>
-            <SelectItem value="automatique">Automatique</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-
+      {/* Technical specs */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Moteur"
@@ -264,6 +199,7 @@ export function VehicleForm({
         />
       </div>
 
+      {/* Performance */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="0-100 km/h (s)"
@@ -283,6 +219,7 @@ export function VehicleForm({
         />
       </div>
 
+      {/* Description */}
       <Textarea
         placeholder="Description"
         value={formData.description}
@@ -293,6 +230,7 @@ export function VehicleForm({
         required
       />
 
+      {/* Image upload */}
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
@@ -303,14 +241,18 @@ export function VehicleForm({
           }`}
       >
         <input {...getInputProps()} />
-        <Upload className="w-8 h-8 mx-auto mb-4 text-gray-400" />
+        <ImageIcon className="w-12 h-12 mx-auto mb-4 text-gray-400" />
         <p className="text-gray-400">
           {isDragActive
             ? "Déposez les images ici..."
             : "Glissez et déposez des images ou cliquez pour sélectionner"}
         </p>
+        <p className="text-sm text-gray-500 mt-2">
+          Formats acceptés: JPG, PNG, WEBP - Max 5MB par image
+        </p>
       </div>
 
+      {/* Upload progress */}
       {Object.keys(uploadProgress).length > 0 && (
         <div className="space-y-2">
           {Object.entries(uploadProgress).map(([fileName, progress]) => (
@@ -323,6 +265,7 @@ export function VehicleForm({
         </div>
       )}
 
+      {/* Image preview */}
       {formData.images && formData.images.length > 0 && (
         <div className="grid grid-cols-4 gap-4">
           {formData.images.map((image, index) => (
@@ -337,7 +280,11 @@ export function VehicleForm({
               />
               <button
                 type="button"
-                onClick={() => handleRemoveImage(image, index)}
+                onClick={() => {
+                  const newImages = [...(formData.images || [])];
+                  newImages.splice(index, 1);
+                  setFormData({ ...formData, images: newImages });
+                }}
                 className="absolute top-2 right-2 p-1 bg-red-500 rounded-full hover:bg-red-600"
               >
                 <X className="w-4 h-4" />
@@ -347,6 +294,7 @@ export function VehicleForm({
         </div>
       )}
 
+      {/* Form actions */}
       <div className="flex justify-end gap-4">
         <Button
           type="button"
