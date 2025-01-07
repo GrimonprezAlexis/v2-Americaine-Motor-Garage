@@ -22,6 +22,7 @@ export function PricingSection() {
   const [searchTerm, setSearchTerm] = useState("");
   const [allPrices, setAllPrices] = useState<ServicePrice[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const q = query(
@@ -42,6 +43,7 @@ export function PricingSection() {
       },
       (error) => {
         console.error("Error fetching prices:", error);
+        setError("Erreur lors du chargement des tarifs");
         setLoading(false);
       }
     );
@@ -59,7 +61,7 @@ export function PricingSection() {
     : allPrices;
 
   return (
-    <section className="py-16">
+    <section className="py-16 bg-gradient-to-b from-black to-gray-900">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -85,12 +87,16 @@ export function PricingSection() {
           <div className="grid gap-8">
             {Object.values(SERVICE_CATEGORIES).map((category) => {
               const Icon = categoryIcons[category.id];
+              const categoryPrices = allPrices.filter(
+                (p) => p.category === category.id
+              );
+
               return (
                 <ServiceCategory
                   key={category.id}
                   category={category}
                   icon={<Icon className="w-6 h-6" />}
-                  prices={allPrices.filter((p) => p.category === category.id)}
+                  prices={categoryPrices}
                   loading={loading}
                 />
               );
