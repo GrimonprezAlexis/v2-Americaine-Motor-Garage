@@ -4,6 +4,8 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Vehicle } from "@/types/vehicle";
+import { useContactStore } from "@/store/contactStore";
+import { useRouter } from "next/navigation";
 import {
   Car,
   Calendar,
@@ -42,6 +44,10 @@ export function VehicleDetailModal({
 }: VehicleDetailModalProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isLiked, setIsLiked] = useState(false);
+  const router = useRouter();
+  const setSelectedVehicle = useContactStore(
+    (state) => state.setSelectedVehicle
+  );
 
   const nextImage = () => {
     if (vehicle.images && currentImageIndex < vehicle.images.length - 1) {
@@ -55,17 +61,51 @@ export function VehicleDetailModal({
     }
   };
 
+  const handleContact = () => {
+    setSelectedVehicle(vehicle);
+    router.push("/contact");
+    onClose();
+  };
+
   const mainSpecs = [
-    { icon: <Calendar className="w-5 h-5" />, label: "Année", value: vehicle.year },
-    { icon: <Gauge className="w-5 h-5" />, label: "Kilométrage", value: `${vehicle.mileage} km` },
-    { icon: <Settings className="w-5 h-5" />, label: "Moteur", value: vehicle.engine },
-    { icon: <Cog className="w-5 h-5" />, label: "Transmission", value: vehicle.transmission },
+    {
+      icon: <Calendar className="w-5 h-5" />,
+      label: "Année",
+      value: vehicle.year,
+    },
+    {
+      icon: <Gauge className="w-5 h-5" />,
+      label: "Kilométrage",
+      value: `${vehicle.mileage} km`,
+    },
+    {
+      icon: <Settings className="w-5 h-5" />,
+      label: "Moteur",
+      value: vehicle.engine,
+    },
+    {
+      icon: <Cog className="w-5 h-5" />,
+      label: "Transmission",
+      value: vehicle.transmission,
+    },
   ];
 
   const performanceSpecs = [
-    { icon: <Gauge className="w-5 h-5" />, label: "Puissance", value: `${vehicle.power} ch` },
-    { icon: <Clock className="w-5 h-5" />, label: "0-100 km/h", value: `${vehicle.acceleration}s` },
-    { icon: <Gauge className="w-5 h-5" />, label: "Vitesse max", value: `${vehicle.maxSpeed} km/h` },
+    {
+      icon: <Gauge className="w-5 h-5" />,
+      label: "Puissance",
+      value: `${vehicle.power} ch`,
+    },
+    {
+      icon: <Clock className="w-5 h-5" />,
+      label: "0-100 km/h",
+      value: `${vehicle.acceleration}s`,
+    },
+    {
+      icon: <Gauge className="w-5 h-5" />,
+      label: "Vitesse max",
+      value: `${vehicle.maxSpeed} km/h`,
+    },
   ];
 
   return (
@@ -140,6 +180,11 @@ export function VehicleDetailModal({
                         {vehicle.status}
                       </Badge>
                     )}
+                    {vehicle.registrationIncluded && (
+                      <Badge className="bg-green-500/90 hover:bg-green-600">
+                        Carte grise incluse
+                      </Badge>
+                    )}
                     <div className="flex items-center text-gray-400 text-sm">
                       <MapPin className="w-4 h-4 mr-1" />
                       <span>Savoie, France</span>
@@ -153,7 +198,11 @@ export function VehicleDetailModal({
                     className="bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
                     onClick={() => setIsLiked(!isLiked)}
                   >
-                    <Heart className={`w-5 h-5 ${isLiked ? 'fill-red-500 text-red-500' : 'text-gray-400'}`} />
+                    <Heart
+                      className={`w-5 h-5 ${
+                        isLiked ? "fill-red-500 text-red-500" : "text-gray-400"
+                      }`}
+                    />
                   </Button>
                   <Button
                     variant="outline"
@@ -198,7 +247,9 @@ export function VehicleDetailModal({
 
               {/* Performance */}
               <div>
-                <h3 className="text-lg font-semibold text-white mb-4">Performance</h3>
+                <h3 className="text-lg font-semibold text-white mb-4">
+                  Performance
+                </h3>
                 <div className="grid grid-cols-3 gap-4">
                   {performanceSpecs.map((spec, index) => (
                     <motion.div
@@ -208,7 +259,9 @@ export function VehicleDetailModal({
                       transition={{ duration: 0.3, delay: index * 0.1 }}
                       className="text-center"
                     >
-                      <div className="text-blue-400 flex justify-center mb-2">{spec.icon}</div>
+                      <div className="text-blue-400 flex justify-center mb-2">
+                        {spec.icon}
+                      </div>
                       <p className="text-sm text-gray-400 mb-1">{spec.label}</p>
                       <p className="text-white font-medium">{spec.value}</p>
                     </motion.div>
@@ -220,20 +273,22 @@ export function VehicleDetailModal({
 
               {/* Description */}
               <div>
-                <h3 className="text-lg font-semibold text-white mb-2">Description</h3>
-                <p className="text-gray-400 leading-relaxed">{vehicle.description}</p>
+                <h3 className="text-lg font-semibold text-white mb-2">
+                  Description
+                </h3>
+                <p className="text-gray-400 leading-relaxed">
+                  {vehicle.description}
+                </p>
               </div>
 
               {/* Actions */}
               <div className="flex flex-col sm:flex-row gap-4 pt-6">
                 <Button
                   className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-                  asChild
+                  onClick={handleContact}
                 >
-                  <a href="/contact">
-                    <Phone className="w-4 h-4 mr-2" />
-                    Nous contacter
-                  </a>
+                  <Phone className="w-4 h-4 mr-2" />
+                  Nous contacter
                 </Button>
                 <Button
                   variant="outline"

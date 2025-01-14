@@ -15,6 +15,7 @@ export interface Vehicle {
   maxSpeed: string;
   description: string;
   images?: string[];
+  registrationIncluded?: boolean; // Add this field
   createdAt?: number;
   updatedAt?: number;
 }

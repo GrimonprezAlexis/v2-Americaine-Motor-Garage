@@ -6,6 +6,8 @@ import { motion } from "framer-motion";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { Vehicle } from "@/types/vehicle";
 import {
   createVehicle,
@@ -43,6 +45,7 @@ export function VehicleForm({
       maxSpeed: "",
       description: "",
       images: [],
+      registrationIncluded: false,
     }
   );
   const [loading, setLoading] = useState(false);
@@ -229,6 +232,20 @@ export function VehicleForm({
         className="bg-gray-800 text-white min-h-[100px]"
         required
       />
+
+      {/* Registration Included Switch */}
+      <div className="flex items-center space-x-4 py-4">
+        <Switch
+          id="registrationIncluded"
+          checked={formData.registrationIncluded}
+          onCheckedChange={(checked) =>
+            setFormData({ ...formData, registrationIncluded: checked })
+          }
+        />
+        <Label htmlFor="registrationIncluded" className="text-white">
+          Carte grise incluse
+        </Label>
+      </div>
 
       {/* Image upload */}
       <div
