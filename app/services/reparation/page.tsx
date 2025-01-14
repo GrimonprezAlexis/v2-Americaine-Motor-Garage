@@ -30,20 +30,31 @@ export default function ReparationPage() {
       description:
         "Maintenance préventive pour garder votre véhicule en parfait état",
       icon: <Hammer className="w-8 h-8 text-blue-500" />,
-      features: ["Vidange moteur", "Filtration", "Freinage"],
+      features: [
+        "Vidange moteur / Filtration",
+        "Freinage / Suspension",
+        "Distribution / Embrayage",
+      ],
     },
     {
       title: "Réparations Mécaniques",
       description: "Interventions sur tous types de pannes mécaniques",
       icon: <Wrench className="w-8 h-8 text-blue-500" />,
-      features: ["Moteur", "Transmission", "Suspension"],
+      features: [
+        "Moteur / Suralimentation",
+        "Trains roulants",
+        "Transmission / Différentiel",
+      ],
     },
     {
       title: "Garantie & Qualité",
-      description:
-        "Un service professionnel avec garantie sur nos interventions",
+      description: "Un Service transparent avec garantie sur nos interventions",
       icon: <Shield className="w-8 h-8 text-blue-500" />,
-      features: ["Pièces d'origine", "Garantie intervention", "Devis détaillé"],
+      features: [
+        "Pièce de qualité",
+        "Garantie intervention",
+        "Devis et Facturation détaillé",
+      ],
     },
   ];
 
