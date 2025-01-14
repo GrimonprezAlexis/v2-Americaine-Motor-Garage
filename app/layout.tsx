@@ -5,7 +5,7 @@ import "./globals.css";
 import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: "Americaine Motor - Spécialiste Véhicules Américains",
+  title: "AMERICAINE MOTOR GARAGE - Spécialiste Véhicules Américains",
   description:
     "Garage automobile multimarques spécialisé véhicules américains en Savoie. Importation, entretien, réparation et services carte grise.",
 };

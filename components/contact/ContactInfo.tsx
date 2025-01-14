@@ -7,14 +7,14 @@ const contactInfo = [
   {
     icon: <Phone className="w-6 h-6 text-blue-500" />,
     title: "Téléphone",
-    content: "+33 6 XX XX XX XX",
+    content: "+33 4 13 33 39 84",
     link: "tel:+33XXXXXXXXX",
   },
   {
     icon: <Mail className="w-6 h-6 text-blue-500" />,
     title: "Email",
-    content: "contact@americaineimport.fr",
-    link: "mailto:contact@americaineimport.fr",
+    content: "info@americaineimport.fr ",
+    link: "mailto:info@americaineimport.fr ",
   },
   {
     icon: <MapPin className="w-6 h-6 text-blue-500" />,
@@ -55,7 +55,11 @@ export function ContactInfo() {
                 <a
                   href={info.link}
                   target={info.link.startsWith("http") ? "_blank" : undefined}
-                  rel={info.link.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    info.link.startsWith("http")
+                      ? "noopener noreferrer"
+                      : undefined
+                  }
                   className="text-gray-400 hover:text-blue-400 transition-colors"
                 >
                   {info.content}

@@ -14,7 +14,8 @@ export default function Home() {
       title: "À propos",
       description: "Notre histoire et notre équipe",
       href: "/a-propos",
-       image: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
+      image:
+        "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
       //image: "@/img/IMG_1901.JPEG",
     },
     {
@@ -50,7 +51,7 @@ export default function Home() {
           className="text-center mb-16"
         >
           <h1 className="text-5xl font-bold text-white mb-4">
-            Americaine Motor
+            AMERICAINE MOTOR GARAGE
           </h1>
           <p className="text-xl text-gray-400">
             Spécialiste des véhicules américains en Savoie

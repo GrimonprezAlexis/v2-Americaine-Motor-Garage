@@ -17,7 +17,7 @@ export default function Footer() {
             transition={{ duration: 0.5 }}
             className="space-y-4"
           >
-            <h3 className="text-xl font-bold mb-4">Americaine Motor</h3>
+            <h3 className="text-xl font-bold mb-4">AMERICAINE MOTOR GARAGE</h3>
             <p className="text-gray-400">
               Spécialiste des véhicules américains en Savoie
             </p>
@@ -33,15 +33,19 @@ export default function Footer() {
             <div className="space-y-2 text-gray-400">
               <p className="flex items-center">
                 <Phone className="w-4 h-4 mr-2" />
-                +33 6 XX XX XX XX
+                +33 4 13 33 39 84
               </p>
               <p className="flex items-center">
                 <Mail className="w-4 h-4 mr-2" />
-                contact@americaineimport.fr
+                info@americaineimport.fr
               </p>
               <p className="flex items-center">
                 <MapPin className="w-4 h-4 mr-2" />
-                Savoie, France
+                <Link
+                  href={"Route De Lyon, 850A D1006, 73160 Saint-Cassin, France"}
+                >
+                  Route De Lyon, 850A D1006, 73160 Saint-Cassin, France
+                </Link>
               </p>
             </div>
           </motion.div>
@@ -60,12 +64,18 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/services/reparation" className="hover:text-blue-400">
+                <Link
+                  href="/services/reparation"
+                  className="hover:text-blue-400"
+                >
                   Réparation / Entretien
                 </Link>
               </li>
               <li>
-                <Link href="/services/carte-grise" className="hover:text-blue-400">
+                <Link
+                  href="/services/carte-grise"
+                  className="hover:text-blue-400"
+                >
                   Service Carte Grise
                 </Link>
               </li>
@@ -104,7 +114,7 @@ export default function Footer() {
           transition={{ duration: 0.5, delay: 0.4 }}
           className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400"
         >
-          <p>© {currentYear} Americaine Motor. Tous droits réservés.</p>
+          <p>© {currentYear} AMERICAINE MOTOR GARAGE. Tous droits réservés.</p>
         </motion.div>
       </div>
     </footer>

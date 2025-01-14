@@ -8,15 +8,39 @@ export default function AboutPage() {
   const team = [
     {
       name: "Andrey",
-      role: "Fondateur & Expert Technique",
+      role: "Gérant Fondateur",
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },
     {
-      name: "Marc",
-      role: "Mécanicien Spécialiste",
+      name: "Lauryn",
+      role: "Co-gérance",
       image:
-        "https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=400&q=80",
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Yury",
+      role: "Expert Mécanicien",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Kevin",
+      role: "Expert Mécanicien",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Jules",
+      role: "Apprenti",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+    },
+    {
+      name: "Tatiana",
+      role: "Gestion Administrative",
+      image:
+        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },
   ];
 
@@ -28,7 +52,7 @@ export default function AboutPage() {
     },
     {
       icon: <Wrench className="w-12 h-12 text-blue-500" />,
-      title: "Expert",
+      title: "Expert en voiture 🇺🇸🇪🇺",
       description: "En véhicules américains",
     },
     {
@@ -114,7 +138,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-white text-center mb-12">
             Notre Équipe
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-6 gap-8 max-w-10xl mx-auto">
             {team.map((member, index) => (
               <motion.div
                 key={index}

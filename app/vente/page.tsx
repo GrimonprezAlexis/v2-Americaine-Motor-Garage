@@ -121,10 +121,10 @@ export default function VentePage() {
           </div>
         </div>
 
-        <VehicleFilters
+        {/* <VehicleFilters
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
-        />
+        /> */}
 
         {error && (
           <motion.div
