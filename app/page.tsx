@@ -85,7 +85,6 @@ export default function Home() {
 
       <SocialFeed />
       <FAQ />
-      <Footer />
     </div>
   );
 }

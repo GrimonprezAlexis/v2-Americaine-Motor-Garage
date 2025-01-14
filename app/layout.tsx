@@ -1,11 +1,13 @@
-import { Metadata } from 'next';
-import { ThemeProvider } from '@/components/theme-provider';
-import { Navigation } from '@/components/Navigation';
-import './globals.css';
+import { Metadata } from "next";
+import { ThemeProvider } from "@/components/theme-provider";
+import { Navigation } from "@/components/Navigation";
+import "./globals.css";
+import Footer from "@/components/Footer";
 
 export const metadata: Metadata = {
-  title: 'Americaine Motor - Spécialiste Véhicules Américains',
-  description: 'Garage automobile multimarques spécialisé véhicules américains en Savoie. Importation, entretien, réparation et services carte grise.',
+  title: "Americaine Motor - Spécialiste Véhicules Américains",
+  description:
+    "Garage automobile multimarques spécialisé véhicules américains en Savoie. Importation, entretien, réparation et services carte grise.",
 };
 
 export default function RootLayout({
@@ -24,6 +26,7 @@ export default function RootLayout({
         >
           <Navigation />
           {children}
+          <Footer />
         </ThemeProvider>
       </body>
     </html>
