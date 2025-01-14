@@ -8,7 +8,7 @@ const contactInfo = [
     icon: <Phone className="w-6 h-6 text-blue-500" />,
     title: "Téléphone",
     content: "+33 4 13 33 39 84",
-    link: "tel:+33XXXXXXXXX",
+    link: "tel:+33413333984",
   },
   {
     icon: <Mail className="w-6 h-6 text-blue-500" />,
@@ -19,13 +19,19 @@ const contactInfo = [
   {
     icon: <MapPin className="w-6 h-6 text-blue-500" />,
     title: "Adresse",
-    content: "Savoie, France",
-    link: "https://maps.google.com",
+    content: "Route De Lyon, 850A D1006, 73160 Saint-Cassin, France",
+    link: "https://maps.google.com?Route De Lyon, 850A D1006, 73160 Saint-Cassin, France",
   },
   {
     icon: <Clock className="w-6 h-6 text-blue-500" />,
     title: "Horaires",
-    content: "Lun-Ven: 9h-18h",
+    content: (
+      <div className="space-y-1">
+        <p>Lundi - Jeudi : 9h - 18h</p>
+        <p>Vendredi : 9h - 17h</p>
+        <p>Samedi - Dimanche : Fermé</p>
+      </div>
+    ),
   },
   {
     icon: <Instagram className="w-6 h-6 text-blue-500" />,
