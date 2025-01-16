@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import SocialFeed from "@/components/SocialFeed";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
+import { SoldVehiclesCarousel } from "@/components/vehicles/SoldVehiclesCarousel";
 
 export default function Home() {
   const sections = [
@@ -84,7 +85,9 @@ export default function Home() {
         </div>
       </main>
 
-      <SocialFeed />
+      {/* <SocialFeed /> */}
+      <SoldVehiclesCarousel />
+
       <FAQ />
     </div>
   );
