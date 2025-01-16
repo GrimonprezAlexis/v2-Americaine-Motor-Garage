@@ -30,6 +30,7 @@ export function Confirmation({ formData }: ConfirmationProps) {
           price: formData.price,
           documents: {},
           userId: "",
+          serviceFee: 30,
         });
 
         // Reset registration store after successful save

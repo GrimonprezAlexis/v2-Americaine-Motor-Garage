@@ -8,9 +8,10 @@ import { formatPrice } from "@/lib/utils/format";
 interface VehicleInfoProps {
   vehicle: VehicleInfoType;
   price: string | number;
+  serviceFee: number;
 }
 
-export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
+export function VehicleInfo({ vehicle, price, serviceFee }: VehicleInfoProps) {
   const details = [
     {
       label: "Mise en circulation",
@@ -30,6 +31,8 @@ export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
     },
   ];
 
+  const totalPrice = Number(price) + serviceFee;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -38,7 +41,10 @@ export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
     >
       <div className="flex items-start gap-6">
         <div className="relative w-24 h-24 flex-shrink-0">
-          <VehicleImage src={vehicle.AWN_url_image} alt={vehicle.AWN_marque} />
+          <VehicleImage
+            src={vehicle.AWN_url_image || ""}
+            alt={vehicle.AWN_marque}
+          />
         </div>
 
         <div className="flex-1 space-y-4">
@@ -60,11 +66,23 @@ export function VehicleInfo({ vehicle, price }: VehicleInfoProps) {
             ))}
           </div>
 
-          <div className="pt-4 border-t border-gray-800">
-            <p className="text-sm text-gray-400">Coût total de la démarche</p>
-            <p className="text-2xl font-bold text-blue-500">
-              {formatPrice(price)}
-            </p>
+          <div className="pt-4 border-t border-gray-800 space-y-2">
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-400">Taxes et redevances</p>
+              <p className="text-white">{formatPrice(price)}</p>
+            </div>
+            <div className="flex justify-between items-center">
+              <p className="text-sm text-gray-400">Frais de service</p>
+              <p className="text-white">{formatPrice(serviceFee)}</p>
+            </div>
+            <div className="flex justify-between items-center pt-2 border-t border-gray-700">
+              <p className="text-sm font-medium text-gray-300">
+                Coût total de la démarche
+              </p>
+              <p className="text-2xl font-bold text-blue-500">
+                {formatPrice(totalPrice)}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -16,6 +16,8 @@ interface VehicleDetailsProps {
   onBack: () => void;
 }
 
+const SERVICE_FEE = 29.99;
+
 export function VehicleDetails({
   formData,
   onUpdate,
@@ -24,7 +26,9 @@ export function VehicleDetails({
 }: VehicleDetailsProps) {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [vehicleData, setVehicleData] = useState<RegistrationResponse | null>(null);
+  const [vehicleData, setVehicleData] = useState<RegistrationResponse | null>(
+    null
+  );
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +52,7 @@ export function VehicleDetails({
         ...formData,
         vehicleInfo: response.data.vehicle,
         price: parseFloat(response.data.price.total),
+        serviceFee: SERVICE_FEE,
         make: response.data.vehicle.AWN_marque,
         model: response.data.vehicle.AWN_modele,
         registration: response.data.vehicle.AWN_immat,
@@ -100,14 +105,13 @@ export function VehicleDetails({
           </div>
         </div>
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
-        )}
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
 
         {vehicleData && (
-          <VehicleInfo 
+          <VehicleInfo
             vehicle={vehicleData.data.vehicle}
             price={vehicleData.data.price.total}
+            serviceFee={SERVICE_FEE}
           />
         )}
 

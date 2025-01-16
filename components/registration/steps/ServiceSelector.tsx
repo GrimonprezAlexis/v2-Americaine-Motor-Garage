@@ -11,21 +11,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FileText, ArrowRight } from "lucide-react";
-
-const SERVICES = [
-  "CHANGEMENT DE TITULAIRE",
-  "PREMIÈRE IMMATRICULATION FRANCAISE",
-  "IMMATRICULATION PROVISOIRE WW",
-  "DECLARATION ACHAT",
-  "DÉCLARATION VENTE",
-  "DEMANDE DE DUPLICATA",
-  "DEMANDE DE CORRECTION",
-  "CHANGEMENT ADRESSE",
-  "PASSAGE EN CG COLLECTION +30ANS",
-  "CHANGEMENT DONNEES PERSONNELLES",
-  "CERTIFICAT DE NON GAGE",
-];
+import { FileText, ArrowRight, Download } from "lucide-react";
+import { REGISTRATION_SERVICES } from "@/types/registration";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 interface ServiceSelectorProps {
   formData: any;
@@ -33,8 +27,15 @@ interface ServiceSelectorProps {
   onNext: () => void;
 }
 
-export function ServiceSelector({ formData, onUpdate, onNext }: ServiceSelectorProps) {
+export function ServiceSelector({
+  formData,
+  onUpdate,
+  onNext,
+}: ServiceSelectorProps) {
   const [error, setError] = useState("");
+  const selectedService = formData.service
+    ? REGISTRATION_SERVICES[formData.service]
+    : null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,9 +76,9 @@ export function ServiceSelector({ formData, onUpdate, onNext }: ServiceSelectorP
               <SelectValue placeholder="Type de démarche" />
             </SelectTrigger>
             <SelectContent>
-              {SERVICES.map((service) => (
-                <SelectItem key={service} value={service}>
-                  {service}
+              {Object.entries(REGISTRATION_SERVICES).map(([key, service]) => (
+                <SelectItem key={key} value={key}>
+                  {service.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -93,14 +94,46 @@ export function ServiceSelector({ formData, onUpdate, onNext }: ServiceSelectorP
           />
         </div>
 
-        {error && (
-          <p className="text-red-500 text-sm text-center">{error}</p>
+        {selectedService && (
+          <Card className="bg-gray-800 border-gray-700">
+            <CardHeader>
+              <CardTitle className="text-white">
+                {selectedService.name}
+              </CardTitle>
+              <CardDescription className="text-gray-400">
+                {selectedService.description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <h4 className="text-sm font-medium text-gray-400 mb-2">
+                  Documents requis :
+                </h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  {selectedService.requiredDocuments.map((doc, index) => (
+                    <li key={index}>{doc}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <Button
+                type="button"
+                variant="outline"
+                className="w-full bg-gray-700 hover:bg-gray-600 text-white"
+                onClick={() =>
+                  window.open(selectedService.documentUrl, "_blank")
+                }
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Télécharger les documents à remplir
+              </Button>
+            </CardContent>
+          </Card>
         )}
 
-        <Button
-          type="submit"
-          className="w-full bg-blue-600 hover:bg-blue-700"
-        >
+        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+
+        <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700">
           Continuer
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>

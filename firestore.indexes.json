@@ -18,11 +18,11 @@
       ]
     },
     {
-      "collectionGroup": "servicePrices",
+      "collectionGroup": "vehicles",
       "queryScope": "COLLECTION",
       "fields": [
-        { "fieldPath": "category", "order": "ASCENDING" },
-        { "fieldPath": "subcategory", "order": "ASCENDING" }
+        { "fieldPath": "isSold", "order": "ASCENDING" },
+        { "fieldPath": "updatedAt", "order": "DESCENDING" }
       ]
     }
   ]

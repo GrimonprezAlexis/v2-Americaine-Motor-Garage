@@ -64,11 +64,13 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
             Documents fournis
           </h3>
           <ul className="space-y-2">
-            {Object.entries(formData.documents || {}).map(([key, files]: [string, any]) => (
-              <li key={key} className="text-gray-300">
-                {key}: {files.length} fichier(s)
-              </li>
-            ))}
+            {Object.entries(formData.documents || {}).map(
+              ([key, files]: [string, any]) => (
+                <li key={key} className="text-gray-300">
+                  {key}: {files.length} fichier(s)
+                </li>
+              )
+            )}
           </ul>
         </div>
 
@@ -101,7 +103,7 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           onClick={onNext}
           className="flex-1 bg-blue-600 hover:bg-blue-700"
         >
-          Valider et payer
+          Envoyer la demande
           <ArrowRight className="w-4 h-4 ml-2" />
         </Button>
       </div>
