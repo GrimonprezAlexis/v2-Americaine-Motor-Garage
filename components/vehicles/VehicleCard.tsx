@@ -38,12 +38,16 @@ const VehicleCard = forwardRef<HTMLDivElement, VehicleCardProps>(
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
                   priority={index < 3}
                 />
-                {vehicle.registrationIncluded && (
-                  <div className="absolute -right-16 top-8 rotate-45 z-10">
-                    <div className="bg-blue-500 text-white text-sm font-bold py-1 px-12 shadow-lg transform hover:scale-110 transition-transform">
+                {vehicle.isSold ? (
+                  <Badge className="absolute top-4 left-4 bg-red-500/90 hover:bg-red-600">
+                    Vendu
+                  </Badge>
+                ) : (
+                  vehicle.registrationIncluded && (
+                    <Badge className="absolute top-4 left-4 bg-blue-500/90 hover:bg-blue-600">
                       Carte grise incluse
-                    </div>
-                  </div>
+                    </Badge>
+                  )
                 )}
                 <div className="absolute inset-0 bg-gradient-to-t from-gray-900 via-gray-900/50 to-transparent opacity-60 group-hover:opacity-40 transition-opacity duration-500" />
               </>
@@ -51,12 +55,6 @@ const VehicleCard = forwardRef<HTMLDivElement, VehicleCardProps>(
               <div className="w-full h-full bg-gray-800 flex items-center justify-center">
                 <Car className="w-12 h-12 text-gray-600" />
               </div>
-            )}
-
-            {vehicle.status && (
-              <Badge className="absolute top-4 left-4 bg-blue-500/90 hover:bg-blue-600">
-                {vehicle.status}
-              </Badge>
             )}
           </div>
 

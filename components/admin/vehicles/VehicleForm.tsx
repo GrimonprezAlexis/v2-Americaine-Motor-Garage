@@ -46,6 +46,7 @@ export function VehicleForm({
       description: "",
       images: [],
       registrationIncluded: false,
+      isSold: false,
     }
   );
   const [loading, setLoading] = useState(false);
@@ -135,7 +136,6 @@ export function VehicleForm({
       onSubmit={handleSubmit}
       className="space-y-6 bg-gray-900 rounded-xl p-8"
     >
-      {/* Form header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-semibold text-white">
           {vehicle ? "Modifier le véhicule" : "Nouveau véhicule"}
@@ -150,7 +150,6 @@ export function VehicleForm({
         </Button>
       </div>
 
-      {/* Basic info */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Titre"
@@ -168,7 +167,6 @@ export function VehicleForm({
         />
       </div>
 
-      {/* Vehicle details */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Marque"
@@ -186,7 +184,44 @@ export function VehicleForm({
         />
       </div>
 
-      {/* Technical specs */}
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          placeholder="Prix"
+          value={formData.price}
+          onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+          className="bg-gray-800 text-white"
+          required
+        />
+        <Input
+          placeholder="Kilométrage"
+          value={formData.mileage}
+          onChange={(e) =>
+            setFormData({ ...formData, mileage: e.target.value })
+          }
+          className="bg-gray-800 text-white"
+          required
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <Input
+          placeholder="Carburant"
+          value={formData.fuel}
+          onChange={(e) => setFormData({ ...formData, fuel: e.target.value })}
+          className="bg-gray-800 text-white"
+          required
+        />
+        <Input
+          placeholder="Transmission"
+          value={formData.transmission}
+          onChange={(e) =>
+            setFormData({ ...formData, transmission: e.target.value })
+          }
+          className="bg-gray-800 text-white"
+          required
+        />
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Moteur"
@@ -202,7 +237,6 @@ export function VehicleForm({
         />
       </div>
 
-      {/* Performance */}
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="0-100 km/h (s)"
@@ -222,7 +256,6 @@ export function VehicleForm({
         />
       </div>
 
-      {/* Description */}
       <Textarea
         placeholder="Description"
         value={formData.description}
@@ -233,21 +266,34 @@ export function VehicleForm({
         required
       />
 
-      {/* Registration Included Switch */}
-      <div className="flex items-center space-x-4 py-4">
-        <Switch
-          id="registrationIncluded"
-          checked={formData.registrationIncluded}
-          onCheckedChange={(checked) =>
-            setFormData({ ...formData, registrationIncluded: checked })
-          }
-        />
-        <Label htmlFor="registrationIncluded" className="text-white">
-          Carte grise incluse
-        </Label>
+      <div className="space-y-4">
+        <div className="flex items-center space-x-4 py-4">
+          <Switch
+            id="registrationIncluded"
+            checked={formData.registrationIncluded}
+            onCheckedChange={(checked) =>
+              setFormData({ ...formData, registrationIncluded: checked })
+            }
+          />
+          <Label htmlFor="registrationIncluded" className="text-white">
+            Carte grise incluse
+          </Label>
+        </div>
+
+        <div className="flex items-center space-x-4 py-4">
+          <Switch
+            id="isSold"
+            checked={formData.isSold}
+            onCheckedChange={(checked) =>
+              setFormData({ ...formData, isSold: checked })
+            }
+          />
+          <Label htmlFor="isSold" className="text-white">
+            Véhicule vendu
+          </Label>
+        </div>
       </div>
 
-      {/* Image upload */}
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer transition-colors
@@ -269,7 +315,6 @@ export function VehicleForm({
         </p>
       </div>
 
-      {/* Upload progress */}
       {Object.keys(uploadProgress).length > 0 && (
         <div className="space-y-2">
           {Object.entries(uploadProgress).map(([fileName, progress]) => (
@@ -282,7 +327,6 @@ export function VehicleForm({
         </div>
       )}
 
-      {/* Image preview */}
       {formData.images && formData.images.length > 0 && (
         <div className="grid grid-cols-4 gap-4">
           {formData.images.map((image, index) => (
@@ -311,7 +355,6 @@ export function VehicleForm({
         </div>
       )}
 
-      {/* Form actions */}
       <div className="flex justify-end gap-4">
         <Button
           type="button"

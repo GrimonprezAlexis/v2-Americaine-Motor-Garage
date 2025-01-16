@@ -123,6 +123,17 @@ export function VehicleDetailModal({
                   className="object-cover"
                   priority
                 />
+                {vehicle.isSold ? (
+                  <Badge className="absolute top-4 left-4 bg-red-500/90 hover:bg-red-600">
+                    Vendu
+                  </Badge>
+                ) : (
+                  vehicle.registrationIncluded && (
+                    <Badge className="absolute top-4 left-4 bg-blue-500/90 hover:bg-blue-600">
+                      Carte grise incluse
+                    </Badge>
+                  )
+                )}
                 {vehicle.images.length > 1 && (
                   <>
                     <Button
@@ -175,16 +186,6 @@ export function VehicleDetailModal({
                     {vehicle.title}
                   </DialogTitle>
                   <div className="flex items-center gap-2">
-                    {vehicle.status && (
-                      <Badge className="bg-blue-500/90 hover:bg-blue-600">
-                        {vehicle.status}
-                      </Badge>
-                    )}
-                    {vehicle.registrationIncluded && (
-                      <Badge className="bg-green-500/90 hover:bg-green-600">
-                        Carte grise incluse
-                      </Badge>
-                    )}
                     <div className="flex items-center text-gray-400 text-sm">
                       <MapPin className="w-4 h-4 mr-1" />
                       <span>Savoie, France</span>
@@ -286,9 +287,10 @@ export function VehicleDetailModal({
                 <Button
                   className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
                   onClick={handleContact}
+                  disabled={vehicle.isSold}
                 >
                   <Phone className="w-4 h-4 mr-2" />
-                  Nous contacter
+                  {vehicle.isSold ? "Véhicule vendu" : "Nous contacter"}
                 </Button>
                 <Button
                   variant="outline"

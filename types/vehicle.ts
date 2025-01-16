@@ -15,7 +15,8 @@ export interface Vehicle {
   maxSpeed: string;
   description: string;
   images?: string[];
-  registrationIncluded?: boolean; // Add this field
+  registrationIncluded?: boolean;
+  isSold?: boolean;
   createdAt?: number;
   updatedAt?: number;
 }
