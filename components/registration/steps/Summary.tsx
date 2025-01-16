@@ -83,7 +83,7 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           <div className="flex justify-between items-center">
             <span className="text-gray-400">Total TTC</span>
             <span className="text-2xl font-bold text-white">
-              {formData.price.toFixed(2)} €
+              {formData.price.toFixed(2) + formData.serviceFee.toFixed(2)} €
             </span>
           </div>
         </div>

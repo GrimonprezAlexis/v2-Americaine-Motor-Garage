@@ -11,6 +11,7 @@ import { ProgressSteps } from "./ProgressSteps";
 import { useAuthStore } from "@/store/authStore";
 import { useRegistrationStore } from "@/store/registrationStore";
 import { AuthRedirect } from "@/components/auth/AuthRedirect";
+import { Button } from "@/components/ui/button";
 
 const steps = [
   "Sélection du service",
@@ -30,6 +31,13 @@ export function RegistrationWizard() {
     useRegistrationStore.persist.rehydrate();
     setInitialized(true);
   }, []);
+
+  const handleStepClick = (stepIndex: number) => {
+    // Only allow going back to previous steps
+    if (stepIndex < registration.currentStep) {
+      registration.setStep(stepIndex);
+    }
+  };
 
   const handleNext = () => {
     if (registration.currentStep < steps.length - 1) {
@@ -64,7 +72,14 @@ export function RegistrationWizard() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      <ProgressSteps steps={steps} currentStep={registration.currentStep} />
+      {/* Breadcrumb Navigation */}
+      <div className="mb-12">
+        <ProgressSteps
+          steps={steps}
+          currentStep={registration.currentStep}
+          onStepClick={handleStepClick}
+        />
+      </div>
 
       <AnimatePresence mode="wait">
         <motion.div

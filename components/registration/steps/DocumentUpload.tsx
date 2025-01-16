@@ -11,6 +11,7 @@ import {
   AlertCircle,
   Loader2,
   FileText,
+  X,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
 import {
@@ -26,6 +27,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { uploadToS3 } from "@/lib/api/s3";
 
 interface DocumentUploadProps {
   formData: any;
@@ -36,11 +38,15 @@ interface DocumentUploadProps {
 
 const DocumentUploadZone = ({
   docType,
+  existingFiles,
   onDrop,
+  onRemove,
   hasFiles,
 }: {
   docType: string;
+  existingFiles?: string[];
   onDrop: (files: File[]) => void;
+  onRemove?: (url: string) => void;
   hasFiles: boolean;
 }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -69,6 +75,31 @@ const DocumentUploadZone = ({
         )}
       </div>
 
+      {existingFiles.length > 0 && (
+        <div className="mb-4 space-y-2">
+          {existingFiles.map((url, index) => (
+            <div
+              key={index}
+              className="flex items-center justify-between bg-gray-700/50 rounded p-2"
+            >
+              <span className="text-sm text-gray-300 truncate flex-1">
+                Document {index + 1}
+              </span>
+              {onRemove && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => onRemove(url)}
+                  className="hover:bg-gray-600"
+                >
+                  <X className="w-4 h-4 text-gray-400" />
+                </Button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+
       <div
         {...getRootProps()}
         className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
@@ -83,6 +114,8 @@ const DocumentUploadZone = ({
         <p className="text-sm text-gray-400">
           {isDragActive
             ? "Déposez les fichiers ici..."
+            : existingFiles.length > 0
+            ? "Ajouter plus de documents"
             : "Glissez et déposez vos fichiers ou cliquez pour sélectionner"}
         </p>
       </div>
@@ -99,7 +132,7 @@ export function DocumentUpload({
   const { user } = useAuthStore();
   const [registrationId, setRegistrationId] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, string[]>>(
-    {}
+    formData.documents || {}
   );
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState("");
@@ -119,7 +152,8 @@ export function DocumentUpload({
           vehicleInfo: formData.vehicleInfo,
           price: formData.price,
           serviceFee: formData.serviceFee,
-          documents: {},
+          documents: formData.documents,
+          userId: user.uid,
         });
         setRegistrationId(id);
       } catch (error) {
@@ -143,11 +177,35 @@ export function DocumentUpload({
     setError("");
 
     try {
-      const urls = await Promise.all(
-        acceptedFiles.map((file) =>
-          uploadRegistrationDocument(registrationId, documentType, file)
-        )
-      );
+      // Validate total size of all files
+      const totalSize = acceptedFiles.reduce((sum, file) => sum + file.size, 0);
+      const MAX_TOTAL_SIZE = 20 * 1024 * 1024; // 20MB total
+      if (totalSize > MAX_TOTAL_SIZE) {
+        throw new Error(
+          "La taille totale des fichiers dépasse la limite de 20MB"
+        );
+      }
+
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        try {
+          const timestamp = Date.now();
+          const uniqueId = Math.random().toString(36).substring(2, 15);
+          const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+          const filename = `${timestamp}-${uniqueId}-${safeFileName}`;
+
+          return await uploadToS3(
+            file,
+            `temp-documents/${user?.uid}/${documentType}/${filename}`
+          );
+        } catch (error: any) {
+          console.error(`Error uploading file ${file.name}:`, error);
+          throw new Error(
+            `Erreur lors du téléchargement de ${file.name}: ${error.message}`
+          );
+        }
+      });
+
+      const urls = await Promise.all(uploadPromises);
 
       const updatedFiles = {
         ...uploadedFiles,
@@ -156,12 +214,23 @@ export function DocumentUpload({
 
       setUploadedFiles(updatedFiles);
       onUpdate({ documents: updatedFiles });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error uploading files:", error);
-      setError("Erreur lors du téléchargement des fichiers");
+      setError(error.message || "Erreur lors du téléchargement des fichiers");
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleRemoveFile = (documentType: string, url: string) => {
+    const updatedFiles = {
+      ...uploadedFiles,
+      [documentType]: uploadedFiles[documentType].filter(
+        (fileUrl) => fileUrl !== url
+      ),
+    };
+    setUploadedFiles(updatedFiles);
+    onUpdate({ documents: updatedFiles });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -212,20 +281,14 @@ export function DocumentUpload({
         </CardHeader>
         <CardContent className="space-y-6">
           {selectedService.requiredDocuments.map((docType) => (
-            <div key={docType}>
-              <DocumentUploadZone
-                docType={docType}
-                onDrop={(files) => handleDrop(docType, files)}
-                hasFiles={!!uploadedFiles[docType]?.length}
-              />
-              {uploadedFiles[docType]?.length > 0 && (
-                <div className="mt-2">
-                  <p className="text-sm text-green-500">
-                    {uploadedFiles[docType].length} fichier(s) téléchargé(s)
-                  </p>
-                </div>
-              )}
-            </div>
+            <DocumentUploadZone
+              key={docType}
+              docType={docType}
+              existingFiles={uploadedFiles[docType] || []}
+              onDrop={(files) => handleDrop(docType, files)}
+              onRemove={(url) => handleRemoveFile(docType, url)}
+              hasFiles={!!uploadedFiles[docType]?.length}
+            />
           ))}
         </CardContent>
       </Card>

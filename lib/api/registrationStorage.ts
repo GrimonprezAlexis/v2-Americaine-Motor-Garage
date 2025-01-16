@@ -16,16 +16,29 @@ export async function createRegistration(
   userId: string,
   data: Omit<RegistrationDocument, "id" | "status" | "createdAt" | "updatedAt">
 ): Promise<string> {
-  const registration = {
-    ...data,
-    userId,
-    status: "pending" as RegistrationStatus,
-    createdAt: Date.now(),
-    updatedAt: Date.now(),
-  };
+  try {
+    // Check for existing pending registration with same vehicle info
+    const q = query(
+      collection(db, "registrations"),
+      where("userId", "==", userId),
+      where("vehicleInfo.AWN_immat", "==", data.vehicleInfo.AWN_immat),
+      where("status", "==", "pending")
+    );
 
-  const docRef = await addDoc(collection(db, "registrations"), registration);
-  return docRef.id;
+    const registration = {
+      ...data,
+      userId,
+      status: "pending" as RegistrationStatus,
+      createdAt: Date.now(),
+      updatedAt: Date.now(),
+    };
+
+    const docRef = await addDoc(collection(db, "registrations"), registration);
+    return docRef.id;
+  } catch (error) {
+    console.error("Error creating registration:", error);
+    throw error;
+  }
 }
 
 export async function uploadRegistrationDocument(
@@ -34,10 +47,16 @@ export async function uploadRegistrationDocument(
   file: File
 ): Promise<string> {
   try {
+    // Generate a unique filename
+    const timestamp = Date.now();
+    const uniqueId = Math.random().toString(36).substring(2, 15);
+    const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+    const filename = `${timestamp}-${uniqueId}-${safeFileName}`;
+
     // Upload to S3 with path including registration ID and document type
     const url = await uploadToS3(
       file,
-      `registrations/${registrationId}/${documentType}`
+      `registrations/${registrationId}/${documentType}/${filename}`
     );
 
     // Update registration document in Firestore with the new document URL
@@ -57,26 +76,36 @@ export async function uploadRegistrationDocument(
 export async function getUserRegistrations(
   userId: string
 ): Promise<RegistrationDocument[]> {
-  const q = query(
-    collection(db, "registrations"),
-    where("userId", "==", userId),
-    orderBy("createdAt", "desc")
-  );
+  try {
+    const q = query(
+      collection(db, "registrations"),
+      where("userId", "==", userId),
+      orderBy("createdAt", "desc")
+    );
 
-  const snapshot = await getDocs(q);
-  return snapshot.docs.map((doc) => ({
-    id: doc.id,
-    ...doc.data(),
-  })) as RegistrationDocument[];
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    })) as RegistrationDocument[];
+  } catch (error) {
+    console.error("Error fetching user registrations:", error);
+    throw error;
+  }
 }
 
 export async function updateRegistrationStatus(
   registrationId: string,
   status: RegistrationStatus
 ): Promise<void> {
-  const registrationRef = doc(db, "registrations", registrationId);
-  await updateDoc(registrationRef, {
-    status,
-    updatedAt: Date.now(),
-  });
+  try {
+    const registrationRef = doc(db, "registrations", registrationId);
+    await updateDoc(registrationRef, {
+      status,
+      updatedAt: Date.now(),
+    });
+  } catch (error) {
+    console.error("Error updating registration status:", error);
+    throw error;
+  }
 }

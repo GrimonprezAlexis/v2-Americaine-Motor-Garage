@@ -13,6 +13,17 @@ const BUCKET_NAME =
 
 export async function uploadToS3(file: File, path: string): Promise<string> {
   try {
+    // Validate file
+    if (!file) {
+      throw new Error("No file provided");
+    }
+
+    // Validate file size (5MB limit)
+    const MAX_SIZE = 5 * 1024 * 1024; // 5MB
+    if (file.size > MAX_SIZE) {
+      throw new Error("File size exceeds 5MB limit");
+    }
+
     // Generate a unique key for the file
     const key = `${path}/${Date.now()}_${encodeURIComponent(file.name)}`;
 
@@ -25,10 +36,17 @@ export async function uploadToS3(file: File, path: string): Promise<string> {
       Key: key,
       Body: Buffer.from(fileBuffer),
       ContentType: file.type,
-      // Remove ACL parameter as it's not supported
+      // Add caching headers
+      CacheControl: "max-age=31536000",
     });
 
-    await s3Client.send(command);
+    // Upload with error handling
+    try {
+      await s3Client.send(command);
+    } catch (uploadError: any) {
+      console.error("S3 upload error:", uploadError);
+      throw new Error(uploadError.message || "Error uploading file to S3");
+    }
 
     // Return the public URL
     return `https://${BUCKET_NAME}.s3.${process.env.NEXT_PUBLIC_AWS_REGION}.amazonaws.com/${key}`;
