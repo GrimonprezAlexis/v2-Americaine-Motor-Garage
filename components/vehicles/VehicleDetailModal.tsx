@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 
 interface VehicleDetailModalProps {
-  vehicle: Vehicle;
+  vehicle: Vehicle | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -48,6 +48,11 @@ export function VehicleDetailModal({
   const setSelectedVehicle = useContactStore(
     (state) => state.setSelectedVehicle
   );
+
+  // Si pas de véhicule, ne rien afficher
+  if (!vehicle) {
+    return null;
+  }
 
   const nextImage = () => {
     if (vehicle.images && currentImageIndex < vehicle.images.length - 1) {
@@ -154,21 +159,21 @@ export function VehicleDetailModal({
                     >
                       <ChevronRight className="w-6 h-6" />
                     </Button>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
+                      {vehicle.images.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentImageIndex(index)}
+                          className={`w-2 h-2 rounded-full transition-all duration-300 ${
+                            index === currentImageIndex
+                              ? "bg-white scale-125"
+                              : "bg-white/50 hover:bg-white/75"
+                          }`}
+                        />
+                      ))}
+                    </div>
                   </>
                 )}
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2">
-                  {vehicle.images.map((_, index) => (
-                    <button
-                      key={index}
-                      onClick={() => setCurrentImageIndex(index)}
-                      className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                        index === currentImageIndex
-                          ? "bg-white scale-125"
-                          : "bg-white/50 hover:bg-white/75"
-                      }`}
-                    />
-                  ))}
-                </div>
               </>
             ) : (
               <div className="w-full h-full bg-gray-800 flex items-center justify-center">
