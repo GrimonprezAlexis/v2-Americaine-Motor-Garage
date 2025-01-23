@@ -1,21 +1,11 @@
-"use client";
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { RegistrationDocument, RegistrationStatus } from "@/types/registration";
-import { updateRegistrationStatus } from "@/lib/api/registrationStorage";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { formatDate, formatPrice } from "@/lib/utils/format";
-import { Car, FileText, Mail, MapPin } from "lucide-react";
-import confetti from "canvas-confetti";
+import { formatDate } from "@/lib/utils/format";
+import { Car, Calendar, FileText, Mail, Phone } from "lucide-react";
+import { updateRegistrationStatus } from "@/lib/api/registrationStorage";
 
 interface RegistrationDetailsProps {
   registration: RegistrationDocument;
@@ -38,21 +28,16 @@ const statusLabels = {
 export function RegistrationDetails({
   registration,
 }: RegistrationDetailsProps) {
-  const [loading, setLoading] = useState(false);
+  const [updating, setUpdating] = useState(false);
 
-  const handleStatusChange = async (newStatus: RegistrationStatus) => {
-    setLoading(true);
+  const handleStatusUpdate = async (status: RegistrationStatus) => {
+    setUpdating(true);
     try {
-      await updateRegistrationStatus(registration.id, newStatus);
-      confetti({
-        particleCount: 100,
-        spread: 70,
-        origin: { y: 0.6 },
-      });
+      await updateRegistrationStatus(registration.id, status);
     } catch (error) {
       console.error("Error updating status:", error);
     } finally {
-      setLoading(false);
+      setUpdating(false);
     }
   };
 
@@ -62,128 +47,154 @@ export function RegistrationDetails({
       animate={{ opacity: 1, y: 0 }}
       className="bg-gray-900 rounded-xl p-8 space-y-8"
     >
-      <div className="flex justify-between items-start">
-        <h2 className="text-2xl font-bold text-white">Détails de la demande</h2>
-        <Badge className={statusColors[registration.status]}>
-          {statusLabels[registration.status]}
-        </Badge>
+      {/* Vehicle Info */}
+      <div>
+        <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+          <Car className="w-5 h-5 mr-2 text-blue-500" />
+          Véhicule
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-400">Marque</p>
+            <p className="text-white">{registration.vehicleInfo.AWN_marque}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Modèle</p>
+            <p className="text-white">{registration.vehicleInfo.AWN_modele}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Immatriculation</p>
+            <p className="text-white">{registration.vehicleInfo.AWN_immat}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Mise en circulation</p>
+            <p className="text-white">
+              {registration.vehicleInfo.AWN_date_mise_en_circulation}
+            </p>
+          </div>
+        </div>
       </div>
 
-      <div className="space-y-6">
-        {/* Informations véhicule */}
-        <div>
-          <h3 className="text-lg font-medium text-white mb-4 flex items-center">
-            <Car className="w-5 h-5 mr-2 text-blue-500" />
-            Véhicule
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-400">Marque / Modèle</p>
-              <p className="text-white">
-                {registration.vehicleInfo.AWN_marque}{" "}
-                {registration.vehicleInfo.AWN_modele}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Immatriculation</p>
-              <p className="text-white">{registration.vehicleInfo.AWN_immat}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Mise en circulation</p>
-              <p className="text-white">
-                {registration.vehicleInfo.AWN_date_mise_en_circulation}
-              </p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Puissance</p>
-              <p className="text-white">
-                {registration.vehicleInfo.AWN_puissance_fiscale} CV
-              </p>
-            </div>
+      {/* Contact Info */}
+      <div>
+        <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+          <Phone className="w-5 h-5 mr-2 text-blue-500" />
+          Contact
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-400">Téléphone</p>
+            <p className="text-white">{registration.phone}</p>
           </div>
-        </div>
-
-        {/* Informations demande */}
-        <div>
-          <h3 className="text-lg font-medium text-white mb-4 flex items-center">
-            <FileText className="w-5 h-5 mr-2 text-blue-500" />
-            Démarche
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <p className="text-sm text-gray-400">Type</p>
-              <p className="text-white">{registration.service}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Date de demande</p>
-              <p className="text-white">{formatDate(registration.createdAt)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">Montant</p>
-              <p className="text-white">{formatPrice(registration.price)}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-400">N° de demande</p>
-              <p className="text-white font-mono">{registration.id}</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Documents */}
-        <div>
-          <h3 className="text-lg font-medium text-white mb-4">
-            Documents fournis
-          </h3>
-          <div className="grid grid-cols-2 gap-4">
-            {Object.entries(registration.documents).map(([type, url]) => (
-              <a
-                key={type}
-                href={url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center text-blue-400 hover:text-blue-300"
-              >
-                <FileText className="w-4 h-4 mr-2" />
-                {type}
-              </a>
-            ))}
-          </div>
-        </div>
-
-        {/* Actions */}
-        <div className="pt-6 border-t border-gray-800">
-          <div className="flex items-center justify-between">
-            <Select
-              value={registration.status}
-              onValueChange={(value: RegistrationStatus) =>
-                handleStatusChange(value)
-              }
-              disabled={loading}
-            >
-              <SelectTrigger className="w-[200px] bg-gray-800">
-                <SelectValue placeholder="Statut" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pending">En attente</SelectItem>
-                <SelectItem value="processing">En cours</SelectItem>
-                <SelectItem value="completed">Terminé</SelectItem>
-                <SelectItem value="rejected">Rejeté</SelectItem>
-              </SelectContent>
-            </Select>
-
+          <div>
+            <p className="text-sm text-gray-400">Email</p>
             <Button
-              variant="outline"
-              className="bg-gray-800 hover:bg-gray-700"
+              size="sm"
+              variant="ghost"
+              className="text-blue-400 hover:text-blue-300 p-0"
               asChild
             >
-              <a href={`mailto:user@example.com`}>
+              <a href={`mailto:${registration.email}`}>
                 <Mail className="w-4 h-4 mr-2" />
-                Contacter
+                {registration.email}
               </a>
             </Button>
           </div>
         </div>
       </div>
+
+      {/* Request Info */}
+      <div>
+        <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+          <FileText className="w-5 h-5 mr-2 text-blue-500" />
+          Demande
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <p className="text-sm text-gray-400">Service</p>
+            <p className="text-white">{registration.service}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Date</p>
+            <p className="text-white">{formatDate(registration.createdAt)}</p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-400">Statut</p>
+            <div className="flex gap-2 mt-1">
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleStatusUpdate("processing")}
+                disabled={updating}
+                className={`${
+                  registration.status === "processing"
+                    ? "bg-blue-500/20 text-blue-400"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                En cours
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleStatusUpdate("completed")}
+                disabled={updating}
+                className={`${
+                  registration.status === "completed"
+                    ? "bg-green-500/20 text-green-400"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                Terminé
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => handleStatusUpdate("rejected")}
+                disabled={updating}
+                className={`${
+                  registration.status === "rejected"
+                    ? "bg-red-500/20 text-red-400"
+                    : "bg-gray-800 text-gray-400"
+                }`}
+              >
+                Rejeté
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Documents */}
+      <div>
+        <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+          <FileText className="w-5 h-5 mr-2 text-blue-500" />
+          Documents
+        </h3>
+        <div className="grid grid-cols-2 gap-4">
+          {Object.entries(registration.documents).map(([type, url]) => (
+            <a
+              key={type}
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 p-3 bg-gray-800 rounded-lg hover:bg-gray-700 transition-colors"
+            >
+              <FileText className="w-4 h-4 text-blue-400" />
+              <span className="text-gray-200">{type}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Messages */}
+      {/* <div>
+        <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+          <Mail className="w-5 h-5 mr-2 text-blue-500" />
+          Messages
+        </h3>
+        <MessageThread registrationId={registration.id} isAdmin={true} />
+      </div> */}
     </motion.div>
   );
 }

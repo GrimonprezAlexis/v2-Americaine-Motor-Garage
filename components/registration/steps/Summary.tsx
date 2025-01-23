@@ -1,8 +1,17 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ArrowLeft, FileText, MapPin, Car } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import {
+  ArrowRight,
+  ArrowLeft,
+  FileText,
+  MapPin,
+  Car,
+  Phone,
+} from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
 interface SummaryProps {
@@ -12,6 +21,24 @@ interface SummaryProps {
 }
 
 export function Summary({ formData, onNext, onBack }: SummaryProps) {
+  const [phone, setPhone] = useState(formData.phone || "");
+  const [error, setError] = useState("");
+
+  const handleSubmit = () => {
+    if (!phone.trim()) {
+      setError("Le numéro de téléphone est obligatoire");
+      return;
+    }
+    // Valider le format du numéro de téléphone avec une regex simple
+    const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Le format du numéro de téléphone est invalide");
+      return;
+    }
+    formData.phone = phone;
+    onNext();
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -99,6 +126,31 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
             </div>
           </div>
         </div>
+
+        <Separator className="bg-gray-800" />
+
+        <div>
+          <h3 className="text-lg font-medium text-white mb-4 flex items-center">
+            <Phone className="w-5 h-5 mr-2 text-blue-500" />
+            Numéro de téléphone
+          </h3>
+          <div className="space-y-4">
+            <Input
+              type="tel"
+              placeholder="Votre numéro de téléphone"
+              value={phone}
+              onChange={(e) => {
+                setPhone(e.target.value);
+                setError("");
+              }}
+              className="bg-gray-800 border-gray-700 text-white"
+            />
+            {error && <p className="text-red-500 text-sm">{error}</p>}
+            <p className="text-sm text-gray-400">
+              Format: +33612345678 ou 0612345678
+            </p>
+          </div>
+        </div>
       </div>
 
       <div className="flex justify-between gap-4">
@@ -112,7 +164,7 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           Retour
         </Button>
         <Button
-          onClick={onNext}
+          onClick={handleSubmit}
           className="flex-1 bg-blue-600 hover:bg-blue-700"
         >
           Envoyer la demande

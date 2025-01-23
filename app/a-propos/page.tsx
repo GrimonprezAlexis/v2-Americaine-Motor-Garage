@@ -26,13 +26,13 @@ export default function AboutPage() {
     },
     {
       name: "Kevin",
-      role: "Expert Mécanicien",
+      role: "Mécanicien",
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },
     {
       name: "Jules",
-      role: "Apprenti",
+      role: "Apprenti Mécanicien",
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },

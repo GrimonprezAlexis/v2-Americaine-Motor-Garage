@@ -9,7 +9,6 @@ export interface RegistrationResponse {
     };
   };
 }
-
 export type RegistrationStatus =
   | "pending"
   | "processing"
@@ -25,6 +24,8 @@ export interface RegistrationDocument {
   price: number;
   serviceFee: number;
   documents: Record<string, string>;
+  phone: string; // Ajout du champ phone
+  email: string;
   createdAt: number;
   updatedAt: number;
 }

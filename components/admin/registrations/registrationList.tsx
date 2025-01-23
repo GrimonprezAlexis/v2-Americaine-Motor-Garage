@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Mail, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils/format";
-import { RegistrationDetails } from "./registrationDetails";
+import { RegistrationDetails } from "./RegistrationDetails";
 import { Alert } from "@/components/ui/alert";
 
 const statusColors = {
@@ -61,6 +61,32 @@ export function RegistrationList() {
     return () => unsubscribe();
   }, []);
 
+  const generateEmailContent = (registration: RegistrationDocument) => {
+    const subject = `Demande carte grise - ${registration.vehicleInfo.AWN_marque} ${registration.vehicleInfo.AWN_modele} - ${registration.vehicleInfo.AWN_immat}`;
+
+    const body = `
+Bonjour,
+
+Je vous contacte concernant votre demande de carte grise :
+
+Référence : ${registration.id}
+Véhicule : ${registration.vehicleInfo.AWN_marque} ${
+      registration.vehicleInfo.AWN_modele
+    }
+Immatriculation : ${registration.vehicleInfo.AWN_immat}
+Service demandé : ${registration.service}
+Date de la demande : ${formatDate(registration.createdAt)}
+
+Cordialement,
+L'équipe Americaine Motor
+    `.trim();
+
+    return {
+      subject: encodeURIComponent(subject),
+      body: encodeURIComponent(body),
+    };
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center">
@@ -81,53 +107,58 @@ export function RegistrationList() {
           Demandes de carte grise
         </h2>
 
-        {registrations.map((registration) => (
-          <motion.div
-            key={registration.id}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`bg-gray-900 rounded-xl p-6 cursor-pointer transition-colors
-              ${
-                selectedRegistration?.id === registration.id
-                  ? "ring-2 ring-blue-500"
-                  : "hover:bg-gray-800"
-              }`}
-            onClick={() => setSelectedRegistration(registration)}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-semibold text-white">
-                  {registration.vehicleInfo.AWN_marque}{" "}
-                  {registration.vehicleInfo.AWN_modele}
-                </h3>
-                <p className="text-sm text-gray-400">
-                  {registration.vehicleInfo.AWN_immat}
-                </p>
+        {registrations.map((registration) => {
+          const emailContent = generateEmailContent(registration);
+          return (
+            <motion.div
+              key={registration.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className={`bg-gray-900 rounded-xl p-6 cursor-pointer transition-colors
+                ${
+                  selectedRegistration?.id === registration.id
+                    ? "ring-2 ring-blue-500"
+                    : "hover:bg-gray-800"
+                }`}
+              onClick={() => setSelectedRegistration(registration)}
+            >
+              <div className="flex justify-between items-start mb-4">
+                <div>
+                  <h3 className="text-lg font-semibold text-white">
+                    {registration.vehicleInfo.AWN_marque}{" "}
+                    {registration.vehicleInfo.AWN_modele}
+                  </h3>
+                  <p className="text-sm text-gray-400">
+                    {registration.vehicleInfo.AWN_immat}
+                  </p>
+                </div>
+                <Badge className={statusColors[registration.status]}>
+                  {statusLabels[registration.status]}
+                </Badge>
               </div>
-              <Badge className={statusColors[registration.status]}>
-                {statusLabels[registration.status]}
-              </Badge>
-            </div>
 
-            <div className="flex items-center justify-between text-sm text-gray-400">
-              <div className="flex items-center">
-                <Clock className="w-4 h-4 mr-2" />
-                {formatDate(registration.createdAt)}
+              <div className="flex items-center justify-between text-sm text-gray-400">
+                <div className="flex items-center">
+                  <Clock className="w-4 h-4 mr-2" />
+                  {formatDate(registration.createdAt)}
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="text-blue-400 hover:text-blue-300"
+                  asChild
+                >
+                  <a
+                    href={`mailto:${registration.email}?subject=${emailContent.subject}&body=${emailContent.body}`}
+                  >
+                    <Mail className="w-4 h-4 mr-2" />
+                    Contacter
+                  </a>
+                </Button>
               </div>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="text-blue-400 hover:text-blue-300"
-                asChild
-              >
-                <a href={`mailto:user@example.com`}>
-                  <Mail className="w-4 h-4 mr-2" />
-                  Contacter
-                </a>
-              </Button>
-            </div>
-          </motion.div>
-        ))}
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Détails de la demande */}

@@ -55,7 +55,7 @@ export default function Home() {
             AMERICAINE MOTOR GARAGE
           </h1>
           <p className="text-xl text-gray-400">
-            Spécialiste des véhicules américains en Savoie
+            Garage multimarque spécialisé dans les véhicules Américains en Savoie
           </p>
         </motion.div>
 

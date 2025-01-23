@@ -17,7 +17,7 @@ export default function ServicesPage() {
     {
       title: "Réparations / Entretien",
       description:
-        "SERVICE MULTIMARQUES SPECIALISE EN VEHICULE AMERICAINES et EUROPEENS",
+        "Service Multimarques Spécialisé en véhicule Américaines et Européens",
       icon: <Wrench className="w-12 h-12" />,
       href: "/services/reparation",
       image:

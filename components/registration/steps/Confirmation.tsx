@@ -1,5 +1,3 @@
-"use client";
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { CheckCircle2, FileText, Loader2 } from "lucide-react";
@@ -38,13 +36,14 @@ export function Confirmation({ formData }: ConfirmationProps) {
           price: formData.price,
           serviceFee: formData.serviceFee,
           documents: formData.documents || {},
+          phone: formData.phone,
+          email: user.email || "",
           userId: user.uid,
         });
 
         setRegistrationId(id);
 
         setTimeout(() => {
-          // Trigger confetti effect
           confetti({
             particleCount: 100,
             spread: 70,

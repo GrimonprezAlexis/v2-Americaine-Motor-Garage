@@ -30,6 +30,7 @@ export async function createRegistration(
 
     // If there's an existing pending or processing registration, return its ID
     if (!existingDocs.empty) {
+      console.log("updateDoc existingDocs", existingDocs);
       const existingDoc = existingDocs.docs[0];
       const existingData = existingDoc.data();
 
@@ -53,6 +54,7 @@ export async function createRegistration(
       updatedAt: Date.now(),
     };
 
+    console.log("addDoc new registration", registration);
     const docRef = await addDoc(collection(db, "registrations"), registration);
     return docRef.id;
   } catch (error) {

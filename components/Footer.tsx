@@ -19,7 +19,8 @@ export default function Footer() {
           >
             <h3 className="text-xl font-bold mb-4">AMERICAINE MOTOR GARAGE</h3>
             <p className="text-gray-400">
-              Spécialiste des véhicules américains en Savoie
+              Garage multimarque spécialisé dans les véhicules Américains en
+              Savoie
             </p>
           </motion.div>
 
