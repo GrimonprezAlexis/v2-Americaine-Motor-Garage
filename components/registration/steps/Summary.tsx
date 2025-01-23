@@ -80,11 +80,23 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           <h3 className="text-lg font-medium text-white mb-4">
             Montant à régler
           </h3>
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400">Total TTC</span>
-            <span className="text-2xl font-bold text-white">
-              {formData.price.toFixed(2) + formData.serviceFee.toFixed(2)} €
-            </span>
+          <div className="space-y-2">
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Taxes et redevances</span>
+              <span className="text-white">{formData.price.toFixed(2)} €</span>
+            </div>
+            <div className="flex justify-between items-center">
+              <span className="text-gray-400">Frais de service</span>
+              <span className="text-white">
+                {formData.serviceFee.toFixed(2)} €
+              </span>
+            </div>
+            <div className="flex justify-between items-center pt-4 border-t border-gray-700">
+              <span className="text-gray-300">Total TTC</span>
+              <span className="text-2xl font-bold text-white">
+                {formData.totalAmount.toFixed(2)} €
+              </span>
+            </div>
           </div>
         </div>
       </div>

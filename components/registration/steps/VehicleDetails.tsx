@@ -48,11 +48,14 @@ export function VehicleDetails({
       );
 
       setVehicleData(response);
+      const totalPrice = parseFloat(response.data.price.total);
+
       onUpdate({
         ...formData,
         vehicleInfo: response.data.vehicle,
-        price: parseFloat(response.data.price.total),
+        price: totalPrice,
         serviceFee: SERVICE_FEE,
+        totalAmount: totalPrice + SERVICE_FEE,
         make: response.data.vehicle.AWN_marque,
         model: response.data.vehicle.AWN_modele,
         registration: response.data.vehicle.AWN_immat,

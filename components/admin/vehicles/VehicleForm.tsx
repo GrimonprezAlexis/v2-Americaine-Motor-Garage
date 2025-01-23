@@ -35,7 +35,7 @@ export function VehicleForm({
       make: "",
       model: "",
       year: "",
-      price: "",
+      price: "0",
       mileage: "",
       fuel: "",
       transmission: "",
@@ -63,7 +63,8 @@ export function VehicleForm({
     onDrop: async (acceptedFiles) => {
       setLoading(true);
       try {
-        const vehicleId = vehicle?.id || (await createVehicle(formData));
+        const vehicleId =
+          vehicle?.id || (await createVehicle(formData as Omit<Vehicle, "id">));
         const uploadedUrls = await Promise.all(
           acceptedFiles.map(async (file) => {
             setUploadProgress((prev) => ({ ...prev, [file.name]: 0 }));
@@ -99,7 +100,7 @@ export function VehicleForm({
       if (vehicle?.id) {
         await updateVehicle(vehicle.id, formData);
       } else {
-        await createVehicle(formData);
+        await createVehicle(formData as Omit<Vehicle, "id">);
       }
 
       confetti({

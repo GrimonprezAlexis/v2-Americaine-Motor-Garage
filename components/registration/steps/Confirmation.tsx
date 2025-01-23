@@ -52,8 +52,9 @@ export function Confirmation({ formData }: ConfirmationProps) {
           });
         }, 3_000);
 
-        // OK: Do not redirect the user
-        // registrationStore.resetRegistration();
+        setTimeout(() => {
+          registrationStore.resetRegistration();
+        }, 30_000);
       } catch (error: any) {
         console.error("Error saving registration:", error);
         setError(

@@ -8,6 +8,7 @@ import {
   where,
   orderBy,
   getDocs,
+  getDoc,
 } from "firebase/firestore";
 import { uploadToS3 } from "./s3";
 import { RegistrationDocument, RegistrationStatus } from "@/types/registration";
@@ -17,14 +18,40 @@ export async function createRegistration(
   data: Omit<RegistrationDocument, "id" | "status" | "createdAt" | "updatedAt">
 ): Promise<string> {
   try {
-    // Check for existing pending registration with same vehicle info
+    // Check for existing registration with same vehicle info
     const q = query(
       collection(db, "registrations"),
       where("userId", "==", userId),
       where("vehicleInfo.AWN_immat", "==", data.vehicleInfo.AWN_immat),
-      where("status", "==", "pending")
+      where("status", "in", ["pending", "processing"])
     );
 
+    const existingDocs = await getDocs(q);
+
+    // If there's an existing pending or processing registration, return its ID
+    if (!existingDocs.empty) {
+      const existingDoc = existingDocs.docs[0];
+      return existingDoc.id;
+    }
+
+    //KEEP THIS CODE FOR EDIT A REGISTER FROM REGISTER DETAIL
+    // // If there's an existing pending or processing registration, return its ID
+    // if (!existingDocs.empty) {
+    //   const existingDoc = existingDocs.docs[0];
+    //   const existingData = existingDoc.data();
+
+    //   // Update the existing registration with new data if needed
+    //   if (data.documents || data.price !== existingData.price) {
+    //     await updateDoc(doc(db, "registrations", existingDoc.id), {
+    //       ...data,
+    //       updatedAt: Date.now(),
+    //     });
+    //   }
+
+    //   return existingDoc.id;
+    // }
+
+    // If no existing registration found, create a new one
     const registration = {
       ...data,
       userId,
@@ -33,6 +60,7 @@ export async function createRegistration(
       updatedAt: Date.now(),
     };
 
+    console.log("registration", registration);
     const docRef = await addDoc(collection(db, "registrations"), registration);
     return docRef.id;
   } catch (error) {

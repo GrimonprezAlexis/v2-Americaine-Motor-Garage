@@ -38,16 +38,18 @@ interface DocumentUploadProps {
 
 const DocumentUploadZone = ({
   docType,
-  existingFiles,
+  existingFiles = [],
   onDrop,
   onRemove,
   hasFiles,
+  uploading,
 }: {
   docType: string;
   existingFiles?: string[];
   onDrop: (files: File[]) => void;
   onRemove?: (url: string) => void;
   hasFiles: boolean;
+  uploading: boolean;
 }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -56,7 +58,7 @@ const DocumentUploadZone = ({
       "application/pdf": [".pdf"],
     },
     maxSize: 5 * 1024 * 1024,
-    multiple: true,
+    disabled: uploading,
   });
 
   return (
@@ -107,17 +109,24 @@ const DocumentUploadZone = ({
             isDragActive
               ? "border-blue-500 bg-blue-500/10"
               : "border-gray-600 hover:border-gray-500"
-          }`}
+          } ${uploading ? "opacity-50 cursor-not-allowed" : ""}`}
       >
         <input {...getInputProps()} />
-        <FileText className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-        <p className="text-sm text-gray-400">
-          {isDragActive
-            ? "Déposez les fichiers ici..."
-            : existingFiles.length > 0
-            ? "Ajouter plus de documents"
-            : "Glissez et déposez vos fichiers ou cliquez pour sélectionner"}
-        </p>
+        {uploading ? (
+          <div className="flex flex-col items-center">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500 mb-2" />
+            <p className="text-sm text-gray-400">Téléchargement en cours...</p>
+          </div>
+        ) : (
+          <>
+            <FileText className="w-8 h-8 mx-auto mb-2 text-gray-400" />
+            <p className="text-sm text-gray-400">
+              {isDragActive
+                ? "Déposez les fichiers ici..."
+                : "Glissez et déposez vos fichiers ou cliquez pour sélectionner"}
+            </p>
+          </>
+        )}
       </div>
     </div>
   );
@@ -142,37 +151,32 @@ export function DocumentUpload({
     [formData.service]
   );
 
-  useEffect(() => {
-    async function initializeRegistration() {
-      if (!user) return;
+  // useEffect(() => {
+  //   async function initializeRegistration() {
+  //     if (!user) return;
 
-      try {
-        const id = await createRegistration(user.uid, {
-          service: formData.service,
-          vehicleInfo: formData.vehicleInfo,
-          price: formData.price,
-          serviceFee: formData.serviceFee,
-          documents: formData.documents,
-          userId: user.uid,
-        });
-        setRegistrationId(id);
-      } catch (error) {
-        console.error("Error creating registration:", error);
-        setError("Erreur lors de l'initialisation de la demande");
-      }
-    }
+  //     try {
+  //       const id = await createRegistration(user.uid, {
+  //         service: formData.service,
+  //         vehicleInfo: formData.vehicleInfo,
+  //         price: formData.price,
+  //         serviceFee: formData.serviceFee,
+  //         documents: formData.documents,
+  //         userId: user.uid,
+  //       });
+  //       setRegistrationId(id);
+  //     } catch (error) {
+  //       console.error("Error creating registration:", error);
+  //       setError("Erreur lors de l'initialisation de la demande");
+  //     }
+  //   }
 
-    if (!registrationId) {
-      initializeRegistration();
-    }
-  }, [user, formData, registrationId]);
+  //   if (!registrationId) {
+  //     initializeRegistration();
+  //   }
+  // }, [user, formData, registrationId]);
 
   const handleDrop = async (documentType: string, acceptedFiles: File[]) => {
-    if (!registrationId) {
-      setError("Erreur: ID de demande non disponible");
-      return;
-    }
-
     setUploading(true);
     setError("");
 
@@ -248,14 +252,6 @@ export function DocumentUpload({
     onNext();
   };
 
-  if (!registrationId) {
-    return (
-      <div className="flex justify-center items-center py-12">
-        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-      </div>
-    );
-  }
-
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -288,6 +284,7 @@ export function DocumentUpload({
               onDrop={(files) => handleDrop(docType, files)}
               onRemove={(url) => handleRemoveFile(docType, url)}
               hasFiles={!!uploadedFiles[docType]?.length}
+              uploading={uploading}
             />
           ))}
         </CardContent>
