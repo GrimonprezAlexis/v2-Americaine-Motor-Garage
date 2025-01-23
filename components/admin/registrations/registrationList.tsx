@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Loader2, Mail, Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils/format";
-import { RegistrationDetails } from "./RegistrationDetails";
+import { RegistrationDetails } from "./registrationDetails";
 import { Alert } from "@/components/ui/alert";
 
 const statusColors = {
