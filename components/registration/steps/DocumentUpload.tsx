@@ -177,6 +177,11 @@ export function DocumentUpload({
   // }, [user, formData, registrationId]);
 
   const handleDrop = async (documentType: string, acceptedFiles: File[]) => {
+    // if (!registrationId) {
+    //   setError("Erreur: ID de demande non disponible");
+    //   return;
+    // }
+
     setUploading(true);
     setError("");
 
@@ -251,6 +256,14 @@ export function DocumentUpload({
 
     onNext();
   };
+
+  // if (!registrationId) {
+  //   return (
+  //     <div className="flex justify-center items-center py-12">
+  //       <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+  //     </div>
+  //   );
+  // }
 
   return (
     <motion.div

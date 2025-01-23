@@ -3,9 +3,9 @@
 import { motion } from "framer-motion";
 import { ServicePrice } from "@/types/service";
 import { SERVICE_CATEGORIES } from "@/types/service";
-import { Car, Wrench, Gauge, Truck } from "lucide-react";
+import { Car, Wrench, Gauge, Truck, LucideIcon } from "lucide-react";
 
-const categoryIcons = {
+const categoryIcons: Record<string, LucideIcon> = {
   [SERVICE_CATEGORIES.TIRES.id]: Car,
   [SERVICE_CATEGORIES.LABOR.id]: Wrench,
   [SERVICE_CATEGORIES.DIAGNOSTIC.id]: Gauge,

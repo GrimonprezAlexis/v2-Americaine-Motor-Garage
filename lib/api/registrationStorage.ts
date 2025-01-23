@@ -31,25 +31,18 @@ export async function createRegistration(
     // If there's an existing pending or processing registration, return its ID
     if (!existingDocs.empty) {
       const existingDoc = existingDocs.docs[0];
+      const existingData = existingDoc.data();
+
+      // Update the existing registration with new data if needed
+      if (data.documents || data.price !== existingData.price) {
+        await updateDoc(doc(db, "registrations", existingDoc.id), {
+          ...data,
+          updatedAt: Date.now(),
+        });
+      }
+
       return existingDoc.id;
     }
-
-    //KEEP THIS CODE FOR EDIT A REGISTER FROM REGISTER DETAIL
-    // // If there's an existing pending or processing registration, return its ID
-    // if (!existingDocs.empty) {
-    //   const existingDoc = existingDocs.docs[0];
-    //   const existingData = existingDoc.data();
-
-    //   // Update the existing registration with new data if needed
-    //   if (data.documents || data.price !== existingData.price) {
-    //     await updateDoc(doc(db, "registrations", existingDoc.id), {
-    //       ...data,
-    //       updatedAt: Date.now(),
-    //     });
-    //   }
-
-    //   return existingDoc.id;
-    // }
 
     // If no existing registration found, create a new one
     const registration = {
@@ -60,7 +53,6 @@ export async function createRegistration(
       updatedAt: Date.now(),
     };
 
-    console.log("registration", registration);
     const docRef = await addDoc(collection(db, "registrations"), registration);
     return docRef.id;
   } catch (error) {

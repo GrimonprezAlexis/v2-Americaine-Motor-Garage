@@ -1,3 +1,15 @@
+export interface RegistrationResponse {
+  data: {
+    vehicle: VehicleInfo;
+    price: {
+      total: string;
+      detail?: {
+        [key: string]: number;
+      };
+    };
+  };
+}
+
 export type RegistrationStatus =
   | "pending"
   | "processing"
