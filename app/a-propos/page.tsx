@@ -20,7 +20,7 @@ export default function AboutPage() {
     },
     {
       name: "Yury",
-      role: "Expert Mécanicien",
+      role: "Chef Mécanicien",
       image:
         "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
     },

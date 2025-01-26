@@ -8,6 +8,7 @@ import SocialFeed from "@/components/SocialFeed";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 import { SoldVehiclesCarousel } from "@/components/vehicles/SoldVehiclesCarousel";
+import GoogleReviews from "@/components/GoogleReviews";
 
 export default function Home() {
   const sections = [
@@ -55,7 +56,8 @@ export default function Home() {
             AMERICAINE MOTOR GARAGE
           </h1>
           <p className="text-xl text-gray-400">
-            Garage multimarque spécialisé dans les véhicules Américains en Savoie
+            Garage multimarque spécialisé dans les véhicules Américains en
+            Savoie
           </p>
         </motion.div>
 
@@ -86,6 +88,7 @@ export default function Home() {
       </main>
 
       {/* <SocialFeed /> */}
+      <GoogleReviews />
       <SoldVehiclesCarousel />
 
       <FAQ />
