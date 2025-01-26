@@ -176,12 +176,14 @@ export function SoldVehiclesCarousel() {
                     <div className="relative aspect-[4/3]">
                       {vehicle.images?.[0] ? (
                         <>
-                          <Image
-                            src={vehicle.images[0]}
-                            alt={vehicle.title}
-                            fill
-                            className="object-cover transition-transform duration-500 group-hover/card:scale-110"
-                          />
+                          <div className="absolute inset-0">
+                            <Image
+                              src={vehicle.images[0]}
+                              alt={vehicle.title}
+                              fill
+                              className="object-cover transition-transform duration-700 group-hover/card:scale-110"
+                            />
+                          </div>
                           <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-60 group-hover/card:opacity-40 transition-opacity duration-300" />
                         </>
                       ) : (
