@@ -63,7 +63,7 @@ export default function GoogleReviews() {
   }
 
   return (
-    <section className="py-10 bg-gradient-to-b from-black to-gray-900">
+    <section className="py-4 bg-gradient-to-b from-black to-gray-900">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -147,7 +147,7 @@ export default function GoogleReviews() {
           className="text-center mt-12"
         >
           <a
-            href="https://www.google.com/maps/place/votre-entreprise"
+            href="https://g.co/kgs/niiBQFM"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 transition-colors"

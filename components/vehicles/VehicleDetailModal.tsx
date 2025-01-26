@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface VehicleDetailModalProps {
   vehicle: Vehicle | null;
@@ -49,7 +50,6 @@ export function VehicleDetailModal({
     (state) => state.setSelectedVehicle
   );
 
-  // Si pas de véhicule, ne rien afficher
   if (!vehicle) {
     return null;
   }
@@ -115,10 +115,10 @@ export function VehicleDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl p-0 bg-gradient-to-b from-gray-900 to-gray-800 border-gray-700/50 overflow-hidden">
+      <DialogContent className="max-w-5xl p-0 bg-gradient-to-b from-gray-900 to-gray-800 border-gray-700/50 overflow-hidden max-h-[95vh] w-[95vw]">
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           {/* Image Section */}
-          <div className="relative h-[300px] lg:h-full min-h-[500px]">
+          <div className="relative h-[300px] lg:h-full min-h-[300px] lg:min-h-[600px]">
             {vehicle.images && vehicle.images.length > 0 ? (
               <>
                 <Image
@@ -183,130 +183,161 @@ export function VehicleDetailModal({
           </div>
 
           {/* Content Section */}
-          <div className="p-6 lg:p-8 overflow-y-auto max-h-[85vh] lg:max-h-[800px]">
-            <DialogHeader className="mb-6">
-              <div className="flex items-start justify-between">
-                <div>
-                  <DialogTitle className="text-2xl lg:text-3xl font-bold text-white mb-2">
-                    {vehicle.title}
-                  </DialogTitle>
-                  <div className="flex items-center gap-2">
-                    <div className="flex items-center text-gray-400 text-sm">
-                      <MapPin className="w-4 h-4 mr-1" />
-                      <span>Savoie, France</span>
-                    </div>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
-                    onClick={() => setIsLiked(!isLiked)}
-                  >
-                    <Heart
-                      className={`w-5 h-5 ${
-                        isLiked ? "fill-red-500 text-red-500" : "text-gray-400"
-                      }`}
-                    />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    className="bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
-                  >
-                    <Share2 className="w-5 h-5 text-gray-400" />
-                  </Button>
-                </div>
-              </div>
-            </DialogHeader>
-
-            <div className="space-y-6">
-              {/* Prix */}
-              <div className="flex items-center text-3xl font-bold text-blue-400">
-                <DollarSign className="w-8 h-8 mr-1" />
-                {vehicle.price}
-              </div>
-
-              {/* Main Specs */}
-              <div className="grid grid-cols-2 gap-4">
-                {mainSpecs.map((spec, index) => (
-                  <motion.div
-                    key={index}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="bg-gray-800/50 rounded-xl p-4"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="text-blue-400">{spec.icon}</div>
-                      <div>
-                        <p className="text-sm text-gray-400">{spec.label}</p>
-                        <p className="text-white font-medium">{spec.value}</p>
+          <ScrollArea className="h-[calc(100vh-4rem)] lg:h-auto">
+            <div className="p-6 lg:p-8">
+              <DialogHeader className="mb-6">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <DialogTitle className="text-2xl lg:text-3xl font-bold text-white mb-2">
+                      {vehicle.title}
+                    </DialogTitle>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center text-gray-400 text-sm">
+                        <MapPin className="w-4 h-4 mr-1" />
+                        <span>Savoie, France</span>
                       </div>
                     </div>
-                  </motion.div>
-                ))}
-              </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
+                      onClick={() => setIsLiked(!isLiked)}
+                    >
+                      <Heart
+                        className={`w-5 h-5 ${
+                          isLiked
+                            ? "fill-red-500 text-red-500"
+                            : "text-gray-400"
+                        }`}
+                      />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="icon"
+                      className="bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
+                    >
+                      <Share2 className="w-5 h-5 text-gray-400" />
+                    </Button>
+                  </div>
+                </div>
+              </DialogHeader>
 
-              <Separator className="bg-gray-700/50" />
+              <div className="space-y-6">
+                {/* Prix */}
+                <div className="flex items-center text-3xl font-bold text-blue-400">
+                  <DollarSign className="w-8 h-8 mr-1" />
+                  {vehicle.price}
+                </div>
 
-              {/* Performance */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-4">
-                  Performance
-                </h3>
-                <div className="grid grid-cols-3 gap-4">
-                  {performanceSpecs.map((spec, index) => (
+                {/* Main Specs */}
+                <div className="grid grid-cols-2 gap-4">
+                  {mainSpecs.map((spec, index) => (
                     <motion.div
                       key={index}
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.3, delay: index * 0.1 }}
-                      className="text-center"
+                      className="bg-gray-800/50 rounded-xl p-4"
                     >
-                      <div className="text-blue-400 flex justify-center mb-2">
-                        {spec.icon}
+                      <div className="flex items-center space-x-3">
+                        <div className="text-blue-400">{spec.icon}</div>
+                        <div>
+                          <p className="text-sm text-gray-400">{spec.label}</p>
+                          <p className="text-white font-medium">{spec.value}</p>
+                        </div>
                       </div>
-                      <p className="text-sm text-gray-400 mb-1">{spec.label}</p>
-                      <p className="text-white font-medium">{spec.value}</p>
                     </motion.div>
                   ))}
                 </div>
-              </div>
 
-              <Separator className="bg-gray-700/50" />
+                <Separator className="bg-gray-700/50" />
 
-              {/* Description */}
-              <div>
-                <h3 className="text-lg font-semibold text-white mb-2">
-                  Description
-                </h3>
-                <p className="text-gray-400 leading-relaxed">
-                  {vehicle.description}
-                </p>
-              </div>
+                {/* Performance */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-4">
+                    Performance
+                  </h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {performanceSpecs.map((spec, index) => (
+                      <motion.div
+                        key={index}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.3, delay: index * 0.1 }}
+                        className="text-center"
+                      >
+                        <div className="text-blue-400 flex justify-center mb-2">
+                          {spec.icon}
+                        </div>
+                        <p className="text-sm text-gray-400 mb-1">
+                          {spec.label}
+                        </p>
+                        <p className="text-white font-medium">{spec.value}</p>
+                      </motion.div>
+                    ))}
+                  </div>
+                </div>
 
-              {/* Actions */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                <Button
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-                  onClick={handleContact}
-                  disabled={vehicle.isSold}
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  {vehicle.isSold ? "Véhicule vendu" : "Nous contacter"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={onClose}
-                  className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
-                >
-                  Fermer
-                </Button>
+                <Separator className="bg-gray-700/50" />
+
+                {/* Description */}
+                <div>
+                  <h3 className="text-lg font-semibold text-white mb-2">
+                    Description
+                  </h3>
+                  <p className="text-gray-400 leading-relaxed">
+                    {vehicle.description}
+                  </p>
+                </div>
+
+                {/* Thumbnails */}
+                {vehicle.images && vehicle.images.length > 1 && (
+                  <div className="grid grid-cols-6 gap-2">
+                    {vehicle.images.map((image, index) => (
+                      <motion.button
+                        key={index}
+                        whileHover={{ scale: 1.05 }}
+                        className={`relative aspect-square rounded-lg overflow-hidden ${
+                          index === currentImageIndex
+                            ? "ring-2 ring-blue-500"
+                            : ""
+                        }`}
+                        onClick={() => setCurrentImageIndex(index)}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${vehicle.title} - Image ${index + 1}`}
+                          fill
+                          className="object-cover"
+                        />
+                      </motion.button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                  <Button
+                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                    onClick={handleContact}
+                    disabled={vehicle.isSold}
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    {vehicle.isSold ? "Véhicule vendu" : "Nous contacter"}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={onClose}
+                    className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
+                  >
+                    Fermer
+                  </Button>
+                </div>
               </div>
             </div>
-          </div>
+          </ScrollArea>
         </div>
       </DialogContent>
     </Dialog>

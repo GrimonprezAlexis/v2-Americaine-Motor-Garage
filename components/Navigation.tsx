@@ -23,7 +23,10 @@ export function Navigation() {
     <nav className="fixed w-full z-50 bg-black/80 backdrop-blur-sm">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
-          <Link href="/" className="text-white font-bold text-xl">
+          <Link
+            href="/"
+            className="text-xl font-bold bg-gradient-to-r from-red-500 via-white to-blue-500 text-transparent bg-clip-text hover:from-red-600 hover:via-white hover:to-blue-600 transition-all duration-300"
+          >
             AMERICAINE MOTOR GARAGE
           </Link>
 

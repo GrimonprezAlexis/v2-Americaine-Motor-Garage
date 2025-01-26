@@ -11,7 +11,7 @@ import { ProgressSteps } from "./ProgressSteps";
 import { useAuthStore } from "@/store/authStore";
 import { useRegistrationStore } from "@/store/registrationStore";
 import { AuthRedirect } from "@/components/auth/AuthRedirect";
-import { Button } from "@/components/ui/button";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const steps = [
   "Sélection du service",
@@ -24,16 +24,20 @@ const steps = [
 export function RegistrationWizard() {
   const { user } = useAuthStore();
   const registration = useRegistrationStore();
-  const [initialized, setInitialized] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  // Hydrate the store on client side
+  // Handle hydration
   useEffect(() => {
     useRegistrationStore.persist.rehydrate();
-    setInitialized(true);
+    setMounted(true);
   }, []);
 
+  // Scroll to top on step change
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [registration.currentStep]);
+
   const handleStepClick = (stepIndex: number) => {
-    // Only allow going back to previous steps
     if (stepIndex < registration.currentStep) {
       registration.setStep(stepIndex);
     }
@@ -55,12 +59,10 @@ export function RegistrationWizard() {
     registration.updateRegistration(data);
   };
 
-  // Show loading state while hydrating
-  if (!initialized) {
+  if (!mounted) {
     return null;
   }
 
-  // Require authentication for document upload and later steps
   if (!user && registration.currentStep >= 2) {
     return (
       <AuthRedirect
@@ -72,8 +74,7 @@ export function RegistrationWizard() {
 
   return (
     <div className="max-w-4xl mx-auto">
-      {/* Breadcrumb Navigation */}
-      <div className="mb-12">
+      <div className="mb-12 px-4 md:px-0">
         <ProgressSteps
           steps={steps}
           currentStep={registration.currentStep}
@@ -81,50 +82,52 @@ export function RegistrationWizard() {
         />
       </div>
 
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={registration.currentStep}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-          transition={{ duration: 0.3 }}
-          className="mt-8"
-        >
-          {registration.currentStep === 0 && (
-            <ServiceSelector
-              formData={registration}
-              onUpdate={updateRegistration}
-              onNext={handleNext}
-            />
-          )}
-          {registration.currentStep === 1 && (
-            <VehicleDetails
-              formData={registration}
-              onUpdate={updateRegistration}
-              onNext={handleNext}
-              onBack={handleBack}
-            />
-          )}
-          {registration.currentStep === 2 && (
-            <DocumentUpload
-              formData={registration}
-              onUpdate={updateRegistration}
-              onNext={handleNext}
-              onBack={handleBack}
-            />
-          )}
-          {registration.currentStep === 3 && (
-            <Summary
-              formData={registration}
-              onNext={handleNext}
-              onBack={handleBack}
-            />
-          )}
-          {registration.currentStep === 4 && (
-            <Confirmation formData={registration} />
-          )}
-        </motion.div>
-      </AnimatePresence>
+      <ScrollArea className="h-[calc(100vh-200px)] px-4 md:px-0">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={registration.currentStep}
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+            className="pb-8"
+          >
+            {registration.currentStep === 0 && (
+              <ServiceSelector
+                formData={registration}
+                onUpdate={updateRegistration}
+                onNext={handleNext}
+              />
+            )}
+            {registration.currentStep === 1 && (
+              <VehicleDetails
+                formData={registration}
+                onUpdate={updateRegistration}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {registration.currentStep === 2 && (
+              <DocumentUpload
+                formData={registration}
+                onUpdate={updateRegistration}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {registration.currentStep === 3 && (
+              <Summary
+                formData={registration}
+                onNext={handleNext}
+                onBack={handleBack}
+              />
+            )}
+            {registration.currentStep === 4 && (
+              <Confirmation formData={registration} />
+            )}
+          </motion.div>
+        </AnimatePresence>
+      </ScrollArea>
     </div>
   );
 }

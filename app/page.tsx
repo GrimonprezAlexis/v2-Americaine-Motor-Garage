@@ -52,7 +52,7 @@ export default function Home() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold text-white mb-4">
+          <h1 className="mt-8 text-4xl font-bold text-white mb-2">
             AMERICAINE MOTOR GARAGE
           </h1>
           <p className="text-xl text-gray-400">
