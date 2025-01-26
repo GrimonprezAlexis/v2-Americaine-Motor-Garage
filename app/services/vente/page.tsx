@@ -14,9 +14,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { VehicleCarousel } from "@/components/vehicles/VehicleCarousel";
+import { useVehicleSearchStore } from "@/store/vehicleSearchStore";
+import { useRouter } from "next/navigation";
 
 export default function VentePage() {
   const [openDialog, setOpenDialog] = useState<string | null>(null);
+  const router = useRouter();
+  const setSearchRequest = useVehicleSearchStore(
+    (state) => state.setSearchRequest
+  );
+
+  const handleSearchRequest = (searchType: string, duration: string) => {
+    setSearchRequest({
+      searchType,
+      duration,
+      subject: `Recherche véhicule - ${searchType}`,
+      message: `Bonjour,\n\nJe souhaite vous confier la recherche du véhicule suivant :\n\nType de recherche : ${searchType}\nDurée de recherche souhaitée : ${duration}\n\nMerci de me recontacter pour définir mes critères de recherche plus en détail.\n\nCordialement,`,
+    });
+    router.push("/contact");
+  };
 
   const importServices = [
     {
@@ -140,6 +156,32 @@ export default function VentePage() {
 
           <div className="bg-gray-800 rounded-lg p-6">
             <h3 className="text-lg font-semibold text-white mb-4">
+              Durée de recherche estimée
+            </h3>
+            <div className="grid grid-cols-3 gap-4">
+              <Button
+                onClick={() => handleSearchRequest(service.title, "3 mois")}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                3 mois
+              </Button>
+              <Button
+                onClick={() => handleSearchRequest(service.title, "6 mois")}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                6 mois
+              </Button>
+              <Button
+                onClick={() => handleSearchRequest(service.title, "1 an")}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                1 an
+              </Button>
+            </div>
+          </div>
+
+          <div className="bg-gray-800 rounded-lg p-6">
+            <h3 className="text-lg font-semibold text-white mb-4">
               Suivez-nous
             </h3>
             <Link
@@ -152,13 +194,6 @@ export default function VentePage() {
               <span>Americaine Motor</span>
             </Link>
           </div>
-
-          <Button className="w-full bg-blue-600 hover:bg-blue-700" asChild>
-            <Link href="/contact">
-              Demander un devis
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
-          </Button>
         </div>
       </div>
     </DialogContent>
@@ -251,11 +286,14 @@ export default function VentePage() {
             vous aider à trouver le véhicule de vos rêves, qu'il soit en Europe
             ou aux États-Unis.
           </p>
-          <Button asChild className="bg-blue-600 hover:bg-blue-700">
-            <Link href="/contact">
-              Nous contacter
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Link>
+          <Button
+            onClick={() =>
+              handleSearchRequest("Recherche spécifique", "6 mois")
+            }
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            Nous contacter
+            <ArrowRight className="w-4 h-4 ml-2" />
           </Button>
         </motion.div>
       </main>

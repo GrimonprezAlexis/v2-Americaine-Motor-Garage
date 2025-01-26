@@ -3,13 +3,12 @@
 import { motion } from "framer-motion";
 import { ServicePrice } from "@/types/service";
 import { SERVICE_CATEGORIES } from "@/types/service";
-import { Car, Wrench, Gauge, Truck, LucideIcon } from "lucide-react";
+import { Car, Wrench, Gauge, DivideIcon as LucideIcon } from "lucide-react";
 
 const categoryIcons: Record<string, LucideIcon> = {
-  [SERVICE_CATEGORIES.TIRES.id]: Car,
-  [SERVICE_CATEGORIES.LABOR.id]: Wrench,
-  [SERVICE_CATEGORIES.DIAGNOSTIC.id]: Gauge,
-  [SERVICE_CATEGORIES.UTILITY.id]: Truck,
+  tires: Car,
+  labor: Wrench,
+  diagnostic: Gauge,
 };
 
 interface SearchResultsProps {
@@ -50,7 +49,7 @@ export function SearchResults({ prices, searchTerm }: SearchResultsProps) {
         );
         if (!category) return null;
 
-        const Icon = categoryIcons[categoryId];
+        const Icon = categoryIcons[categoryId] || Car;
         return (
           <motion.div
             key={categoryId}

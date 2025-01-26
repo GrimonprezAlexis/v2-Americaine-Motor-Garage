@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { formatPrice } from "@/lib/utils/format";
 
 interface VehicleDetailModalProps {
   vehicle: Vehicle | null;
@@ -115,7 +116,7 @@ export function VehicleDetailModal({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl p-0 bg-gradient-to-b from-gray-900 to-gray-800 border-gray-700/50 overflow-hidden max-h-[95vh] w-[95vw]">
+      <DialogContent className="max-w-5xl p-0 bg-gradient-to-b from-gray-900 to-gray-800 border-gray-700/50 max-h-[95vh] w-[95vw] overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-2 h-full">
           {/* Image Section */}
           <div className="relative h-[300px] lg:h-full min-h-[300px] lg:min-h-[600px]">
@@ -125,7 +126,7 @@ export function VehicleDetailModal({
                   src={vehicle.images[currentImageIndex]}
                   alt={`${vehicle.title} - Image ${currentImageIndex + 1}`}
                   fill
-                  className="object-cover"
+                  className="object-contain bg-gray-900"
                   priority
                 />
                 {vehicle.isSold ? (
@@ -183,7 +184,7 @@ export function VehicleDetailModal({
           </div>
 
           {/* Content Section */}
-          <ScrollArea className="h-[calc(100vh-4rem)] lg:h-auto">
+          <div className="flex flex-col h-[600px] lg:h-full overflow-hidden">
             <div className="p-6 lg:p-8">
               <DialogHeader className="mb-6">
                 <div className="flex items-start justify-between">
@@ -223,12 +224,14 @@ export function VehicleDetailModal({
                   </div>
                 </div>
               </DialogHeader>
+            </div>
 
+            <ScrollArea className="flex-1 px-6 lg:px-8">
               <div className="space-y-6">
                 {/* Prix */}
                 <div className="flex items-center text-3xl font-bold text-blue-400">
                   <DollarSign className="w-8 h-8 mr-1" />
-                  {vehicle.price}
+                  {formatPrice(vehicle.price)}
                 </div>
 
                 {/* Main Specs */}
@@ -287,7 +290,7 @@ export function VehicleDetailModal({
                   <h3 className="text-lg font-semibold text-white mb-2">
                     Description
                   </h3>
-                  <p className="text-gray-400 leading-relaxed">
+                  <p className="text-gray-400 leading-relaxed whitespace-pre-line">
                     {vehicle.description}
                   </p>
                 </div>
@@ -316,28 +319,30 @@ export function VehicleDetailModal({
                     ))}
                   </div>
                 )}
+              </div>
+            </ScrollArea>
 
-                {/* Actions */}
-                <div className="flex flex-col sm:flex-row gap-4 pt-6">
-                  <Button
-                    className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
-                    onClick={handleContact}
-                    disabled={vehicle.isSold}
-                  >
-                    <Phone className="w-4 h-4 mr-2" />
-                    {vehicle.isSold ? "Véhicule vendu" : "Nous contacter"}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={onClose}
-                    className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
-                  >
-                    Fermer
-                  </Button>
-                </div>
+            {/* Actions - Fixed at bottom */}
+            <div className="p-6 lg:p-8 border-t border-gray-700/50">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button
+                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white"
+                  onClick={handleContact}
+                  disabled={vehicle.isSold}
+                >
+                  <Phone className="w-4 h-4 mr-2" />
+                  {vehicle.isSold ? "Véhicule vendu" : "Nous contacter"}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={onClose}
+                  className="flex-1 bg-gray-800/50 hover:bg-gray-700/50 border-gray-700/50"
+                >
+                  Fermer
+                </Button>
               </div>
             </div>
-          </ScrollArea>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

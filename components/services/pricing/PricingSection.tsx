@@ -5,17 +5,16 @@ import { motion } from "framer-motion";
 import { ServiceCategory } from "./ServiceCategory";
 import { SearchBar } from "./SearchBar";
 import { SERVICE_CATEGORIES } from "@/types/service";
-import { Wrench, Gauge, Car, Truck } from "lucide-react";
+import { Wrench, Gauge, Car } from "lucide-react";
 import { collection, query, orderBy, onSnapshot } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import { ServicePrice } from "@/types/service";
 import { SearchResults } from "./SearchResults";
 
 const categoryIcons = {
-  [SERVICE_CATEGORIES.TIRES.id]: Car,
-  [SERVICE_CATEGORIES.LABOR.id]: Wrench,
-  [SERVICE_CATEGORIES.DIAGNOSTIC.id]: Gauge,
-  [SERVICE_CATEGORIES.UTILITY.id]: Truck,
+  tires: Car,
+  labor: Wrench,
+  diagnostic: Gauge,
 };
 
 export function PricingSection() {
@@ -81,12 +80,15 @@ export function PricingSection() {
           <SearchBar value={searchTerm} onChange={setSearchTerm} />
         </div>
 
-        {searchTerm ? (
+        {error ? (
+          <div className="text-center text-red-500 mb-8">{error}</div>
+        ) : searchTerm ? (
           <SearchResults prices={filteredPrices} searchTerm={searchTerm} />
         ) : (
           <div className="grid gap-8">
             {Object.values(SERVICE_CATEGORIES).map((category) => {
-              const Icon = categoryIcons[category.id];
+              const Icon =
+                categoryIcons[category.id as keyof typeof categoryIcons] || Car;
               const categoryPrices = allPrices.filter(
                 (p) => p.category === category.id
               );

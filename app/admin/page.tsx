@@ -30,12 +30,6 @@ export default function AdminPage() {
       icon: <FileText className="w-8 h-8 text-purple-500" />,
       href: "/admin/carte-grise",
     },
-    {
-      title: "Gestion Utilisateurs",
-      description: "Gérer les comptes utilisateurs",
-      icon: <Users className="w-8 h-8 text-orange-500" />,
-      href: "/admin/users",
-    },
   ];
 
   if (!isAuthenticated) {

@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { VehicleForm } from '@/components/admin/vehicles/VehicleForm';
-import { VehicleList } from '@/components/admin/vehicles/VehicleList';
-import { Vehicle } from '@/types/vehicle';
-import { Alert } from '@/components/ui/alert';
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { VehicleForm } from "@/components/admin/vehicles/VehicleForm";
+import { VehicleList } from "@/components/admin/vehicles/VehicleList";
+import { Vehicle } from "@/types/vehicle";
+import { Alert } from "@/components/ui/alert";
+import { AdminNavigation } from "@/components/admin/AdminNavigation";
 
 export default function AdminVehiclesPage() {
   const [showForm, setShowForm] = useState(false);
@@ -16,9 +17,13 @@ export default function AdminVehiclesPage() {
 
   return (
     <div className="min-h-screen bg-black pt-20">
+      <AdminNavigation />
+
       <main className="container mx-auto px-4 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-3xl font-bold text-white">Gestion des Véhicules</h1>
+          <h1 className="text-3xl font-bold text-white">
+            Gestion des Véhicules
+          </h1>
           <Button
             onClick={() => {
               setSelectedVehicle(null);

@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useContactStore } from "@/store/contactStore";
+import { useRepairQuoteStore } from "@/store/repairQuoteStore";
+import { useVehicleSearchStore } from "@/store/vehicleSearchStore";
 import { Mail, Phone, User, Send } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 
@@ -13,6 +15,14 @@ export function ContactForm() {
   const selectedVehicle = useContactStore((state) => state.selectedVehicle);
   const clearSelectedVehicle = useContactStore(
     (state) => state.clearSelectedVehicle
+  );
+  const quoteRequest = useRepairQuoteStore((state) => state.quoteRequest);
+  const clearQuoteRequest = useRepairQuoteStore(
+    (state) => state.clearQuoteRequest
+  );
+  const searchRequest = useVehicleSearchStore((state) => state.searchRequest);
+  const clearSearchRequest = useVehicleSearchStore(
+    (state) => state.clearSearchRequest
   );
 
   const [formData, setFormData] = useState({
@@ -44,6 +54,30 @@ export function ContactForm() {
       return () => clearSelectedVehicle();
     }
   }, [selectedVehicle, clearSelectedVehicle]);
+
+  useEffect(() => {
+    if (quoteRequest) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: quoteRequest.subject || "",
+        message: quoteRequest.message || "",
+      }));
+
+      return () => clearQuoteRequest();
+    }
+  }, [quoteRequest, clearQuoteRequest]);
+
+  useEffect(() => {
+    if (searchRequest) {
+      setFormData((prev) => ({
+        ...prev,
+        subject: searchRequest.subject || "",
+        message: searchRequest.message || "",
+      }));
+
+      return () => clearSearchRequest();
+    }
+  }, [searchRequest, clearSearchRequest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

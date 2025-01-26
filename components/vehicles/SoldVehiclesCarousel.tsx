@@ -7,9 +7,7 @@ import {
   ChevronRight,
   Car,
   AlertCircle,
-  Calendar,
-  Gauge,
-  Settings,
+  Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Vehicle } from "@/types/vehicle";
@@ -23,9 +21,9 @@ import {
 } from "firebase/firestore";
 import { db } from "@/lib/firebase/config";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { VehicleDetailModal } from "./VehicleDetailModal";
+import { Badge } from "../ui/badge";
 
 export function SoldVehiclesCarousel() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
@@ -36,7 +34,7 @@ export function SoldVehiclesCarousel() {
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
   const [isPaused, setIsPaused] = useState(false);
 
-  const ITEMS_PER_PAGE = 3;
+  const ITEMS_PER_PAGE = 4;
   const AUTO_ADVANCE_DELAY = 5000;
 
   useEffect(() => {
@@ -101,7 +99,7 @@ export function SoldVehiclesCarousel() {
       <section className="py-20 bg-gradient-to-b from-gray-900 to-black">
         <div className="container mx-auto px-4">
           <div className="flex justify-center items-center h-96">
-            <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
           </div>
         </div>
       </section>
@@ -162,7 +160,7 @@ export function SoldVehiclesCarousel() {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -100 }}
                 transition={{ duration: 0.5 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-8"
+                className="grid grid-cols-2 md:grid-cols-4 gap-4"
               >
                 {currentVehicles.map((vehicle, index) => (
                   <motion.div
@@ -170,58 +168,21 @@ export function SoldVehiclesCarousel() {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5, delay: index * 0.1 }}
-                    className="bg-gray-900 rounded-xl overflow-hidden group/card cursor-pointer transform transition-all duration-300 hover:scale-105 hover:shadow-xl hover:shadow-blue-500/10"
+                    className="aspect-square relative rounded-xl overflow-hidden cursor-pointer transform transition-all duration-300 hover:scale-105"
                     onClick={() => setSelectedVehicle(vehicle)}
                   >
-                    <div className="relative aspect-[4/3]">
-                      {vehicle.images?.[0] ? (
-                        <>
-                          <div className="absolute inset-0">
-                            <Image
-                              src={vehicle.images[0]}
-                              alt={vehicle.title}
-                              fill
-                              className="object-cover transition-transform duration-700 group-hover/card:scale-110"
-                            />
-                          </div>
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent opacity-60 group-hover/card:opacity-40 transition-opacity duration-300" />
-                        </>
-                      ) : (
-                        <div className="w-full h-full bg-gray-800 flex items-center justify-center">
-                          <Car className="w-12 h-12 text-gray-600" />
-                        </div>
-                      )}
-                      <Badge className="absolute top-4 left-4 bg-red-500/90 hover:bg-red-600 transform transition-transform duration-300 group-hover/card:scale-110">
-                        Vendu
-                      </Badge>
-                    </div>
-
-                    <div className="p-6">
-                      <h3 className="text-xl font-bold text-white mb-4 line-clamp-1 group-hover/card:text-blue-400 transition-colors duration-300">
-                        {vehicle.title}
-                      </h3>
-
-                      <div className="grid grid-cols-2 gap-4 mb-4">
-                        <div className="flex items-center text-gray-400 group-hover/card:text-gray-300 transition-colors duration-300">
-                          <Calendar className="w-4 h-4 mr-2 text-blue-400" />
-                          <span>{vehicle.year}</span>
-                        </div>
-                        <div className="flex items-center text-gray-400 group-hover/card:text-gray-300 transition-colors duration-300">
-                          <Gauge className="w-4 h-4 mr-2 text-blue-400" />
-                          <span>{vehicle.mileage} km</span>
-                        </div>
+                    {vehicle.images?.[0] ? (
+                      <Image
+                        src={vehicle.images[0]}
+                        alt={vehicle.title}
+                        fill
+                        className="object-cover transition-transform duration-700 hover:scale-110"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-gray-800 flex items-center justify-center">
+                        <Car className="w-12 h-12 text-gray-600" />
                       </div>
-
-                      <div className="flex items-center justify-between pt-4 border-t border-gray-800">
-                        <div className="flex items-center text-gray-400 group-hover/card:text-gray-300 transition-colors duration-300">
-                          <Settings className="w-4 h-4 mr-2" />
-                          <span>{vehicle.engine}</span>
-                        </div>
-                        <span className="text-xl font-bold text-blue-400 group-hover/card:text-blue-300 transition-colors duration-300">
-                          {vehicle.price}
-                        </span>
-                      </div>
-                    </div>
+                    )}
                   </motion.div>
                 ))}
               </motion.div>
