@@ -10,37 +10,31 @@ export default function AboutPage() {
       name: "Andrey",
       role: "Gérant Fondateur",
       image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Andrey+-+Ge%CC%81rant+Fondateur.jpg",
     },
     {
       name: "Lauryn",
-      role: "Co-gérance",
+      role: "Co-Gérante",
       image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Lauryn+-+Co-Gerante.jpeg",
     },
     {
-      name: "Yury",
+      name: "Yuri",
       role: "Chef Mécanicien",
       image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Yuri+-+Chef+me%CC%81canicien.jpg",
     },
     {
       name: "Kevin",
       role: "Mécanicien",
       image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Kevin+-+Mecanicien.jpg",
     },
     {
-      name: "Jules",
-      role: "Apprenti Mécanicien",
+      name: "Chester",
+      role: "Mascotte du Garage",
       image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
-    },
-    {
-      name: "Tatiana",
-      role: "Gestion Administrative",
-      image:
-        "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&w=400&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Chester+-+Mascotte+du+garage.jpg",
     },
   ];
 
@@ -59,6 +53,19 @@ export default function AboutPage() {
       icon: <Trophy className="w-12 h-12 text-blue-500" />,
       title: "10+ années",
       description: "D'expérience",
+    },
+  ];
+
+  const courtesyVehicles = [
+    {
+      title: "Véhicule de courtoisie - Vue avant",
+      image:
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Ve%CC%81hicule+courtoisie+av.jpg",
+    },
+    {
+      title: "Véhicule de courtoisie - Vue arrière",
+      image:
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Ve%CC%81hicule+courtoisie+ar.jpg",
     },
   ];
 
@@ -138,7 +145,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-white text-center mb-12">
             Notre Équipe
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-6 gap-8 max-w-10xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
             {team.map((member, index) => (
               <motion.div
                 key={index}
@@ -147,7 +154,7 @@ export default function AboutPage() {
                 transition={{ duration: 0.5, delay: index * 0.2 }}
                 className="relative group"
               >
-                <div className="relative h-96 rounded-xl overflow-hidden">
+                <div className="relative aspect-[3/4] rounded-xl overflow-hidden">
                   <Image
                     src={member.image}
                     alt={member.name}
@@ -161,6 +168,38 @@ export default function AboutPage() {
                     </h3>
                     <p className="text-gray-300">{member.role}</p>
                   </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.section>
+
+        <motion.section
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8 }}
+          className="mb-20"
+        >
+          <h2 className="text-3xl font-bold text-white text-center mb-12">
+            Véhicules de Courtoisie
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            {courtesyVehicles.map((vehicle, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: index * 0.2 }}
+                className="relative group"
+              >
+                <div className="relative aspect-[16/9] rounded-xl overflow-hidden">
+                  <Image
+                    src={vehicle.image}
+                    alt={vehicle.title}
+                    fill
+                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
               </motion.div>
             ))}
