@@ -5,7 +5,7 @@ import { ServicePrice } from "@/types/service";
 import { SERVICE_CATEGORIES } from "@/types/service";
 import { Car, Wrench, Gauge, DivideIcon as LucideIcon } from "lucide-react";
 
-const categoryIcons: Record<string, LucideIcon> = {
+const categoryIcons: Record<string, typeof LucideIcon> = {
   tires: Car,
   labor: Wrench,
   diagnostic: Gauge,

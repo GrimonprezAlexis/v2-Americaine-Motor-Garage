@@ -117,7 +117,7 @@ export default function AdminServicesPage() {
               </div>
             </TabsContent>
 
-            <TabsContent value="utility">
+            {/* <TabsContent value="utility">
               <div className="space-y-8">
                 <ServicePricingTable
                   category={SERVICE_CATEGORIES.UTILITY.id}
@@ -130,7 +130,7 @@ export default function AdminServicesPage() {
                   title="JANTE ALUMINIUM - UTILITAIRES & 4X4"
                 />
               </div>
-            </TabsContent>
+            </TabsContent> */}
           </Tabs>
         </motion.div>
       </main>
