@@ -31,6 +31,12 @@ export default function AboutPage() {
         "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Kevin+-+Mecanicien.jpg",
     },
     {
+      name: "Jules",
+      role: "Apprenti Mécanicien",
+      image:
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Jules+-+Apprenti+Mecanicien.jpg",
+    },
+    {
       name: "Chester",
       role: "Mascotte du Garage",
       image:
@@ -132,7 +138,7 @@ export default function AboutPage() {
           <h2 className="text-3xl font-bold text-white text-center mb-12">
             Notre Équipe
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-8 max-w-7xl mx-auto">
             {team.map((member, index) => (
               <motion.div
                 key={index}
