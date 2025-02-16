@@ -20,6 +20,7 @@ import {
   Share2,
   Heart,
   MapPin,
+  Euro,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -230,7 +231,7 @@ export function VehicleDetailModal({
               <div className="space-y-6">
                 {/* Prix */}
                 <div className="flex items-center text-3xl font-bold text-blue-400">
-                  <DollarSign className="w-8 h-8 mr-1" />
+                  <Euro className="w-8 h-8 mr-1" />
                   {formatPrice(vehicle.price)}
                 </div>
 

@@ -4,7 +4,7 @@ import { forwardRef, useState } from "react";
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { Vehicle } from "@/types/vehicle";
-import { Car, Calendar, Gauge, DollarSign, ArrowRight } from "lucide-react";
+import { Car, Calendar, Gauge, DollarSign, ArrowRight, Euro } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { VehicleDetailModal } from "./VehicleDetailModal";
 import { Badge } from "@/components/ui/badge";
@@ -91,7 +91,7 @@ const VehicleCard = forwardRef<HTMLDivElement, VehicleCardProps>(
 
             <div className="flex items-center justify-between pt-4 border-t border-gray-700/50">
               <div className="flex items-center text-blue-400 text-2xl font-bold group-hover:text-blue-300 transition-colors">
-                <DollarSign className="w-6 h-6 mr-1" />
+                <Euro className="w-6 h-6 mr-1" />
                 {vehicle.price}
               </div>
               <Button
