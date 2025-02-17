@@ -116,7 +116,7 @@ export function ServiceSelector({
                 </ul>
               </div>
 
-              <Button
+              {/* <Button
                 type="button"
                 variant="outline"
                 className="w-full bg-gray-700 hover:bg-gray-600 text-white"
@@ -126,7 +126,7 @@ export function ServiceSelector({
               >
                 <Download className="w-4 h-4 mr-2" />
                 Télécharger les documents à remplir
-              </Button>
+              </Button> */}
             </CardContent>
           </Card>
         )}
