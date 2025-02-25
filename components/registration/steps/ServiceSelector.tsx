@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FileText, ArrowRight, Download } from "lucide-react";
-import { REGISTRATION_SERVICES } from "@/types/registration";
+import { documentUrl, REGISTRATION_SERVICES } from "@/types/registration";
 import {
   Card,
   CardContent,
@@ -116,17 +116,18 @@ export function ServiceSelector({
                 </ul>
               </div>
 
-              {/* <Button
-                type="button"
-                variant="outline"
-                className="w-full bg-gray-700 hover:bg-gray-600 text-white"
-                onClick={() =>
-                  window.open(selectedService.documentUrl, "_blank")
-                }
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Télécharger les documents à remplir
-              </Button> */}
+              {selectedService.documentUrls.map((x: documentUrl, index) => (
+                <Button
+                  key={index}
+                  type="button"
+                  variant="outline"
+                  className="w-full bg-gray-700 hover:bg-gray-600 text-white"
+                  onClick={() => window.open(x.link, "_blank")}
+                >
+                  <Download className="w-4 h-4 mr-2" />
+                  {x.name}
+                </Button>
+              ))}
             </CardContent>
           </Card>
         )}

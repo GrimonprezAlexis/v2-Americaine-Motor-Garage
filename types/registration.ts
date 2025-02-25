@@ -45,8 +45,13 @@ export interface RegistrationService {
   id: string;
   name: string;
   description: string;
-  documentUrl: string;
+  documentUrls: documentUrl[];
   requiredDocuments: string[];
+}
+
+export interface documentUrl {
+  name: string;
+  link: string;
 }
 
 export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
@@ -54,97 +59,219 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "changement-titulaire",
     name: "Changement de titulaire",
     description: "Transfert de propriété d'un véhicule",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/1-Changement-titulaire.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Carte d'identité",
-      "Justificatif de domicile",
-      "Certificat de cession",
       "Carte grise barrée",
+      "Certificat de cession",
+      "Pièce d'identité",
+      "Permis de conduire",
+      "CT de moins de 6 mois",
+      "Justificatif de domicile moins 6 mois",
+      "Assurance au nom de demandeur",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "PREMIÈRE IMMATRICULATION FRANCAISE": {
     id: "premiere-immat",
     name: "Première immatriculation française",
     description: "Immatriculation d'un véhicule importé",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/2-Premiere-immat-francaise.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Titre d'importation",
+      "Carte grise complète étrangère",
+      "Certificat de cession ou facture d'achat",
+      "Pièce d'identité",
+      "Permis de conduire",
+      "CT de moins de 6 mois",
+      "Justificatif de domicile moins 6 mois",
+      "Assurance au nom de demandeur",
+      "Quitus fiscal ou 846A",
       "Certificat de conformité",
-      "Quitus fiscal",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "IMMATRICULATION PROVISOIRE WW": {
     id: "ww",
     name: "Immatriculation provisoire WW",
     description: "Plaque temporaire pour export",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/3-Immatriculation-provisoire-WW.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Titre de propriété",
-      "Attestation d'assurance",
+      "Carte grise complète étrangère",
+      "Certificat de cession ou facture d'achat",
       "Pièce d'identité",
+      "Permis de conduire",
+      "CT de moins de 6 mois",
+      "Justificatif de domicile moins 6 mois",
+      "Assurance au nom de demandeur",
+      "Quitus fiscal ou 846A",
+      "Certificat de conformité",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "DECLARATION ACHAT": {
     id: "declaration-achat",
     name: "Déclaration d'achat",
     description: "Enregistrement d'un achat de véhicule",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/4-Documents-declaration-achat.pdf",
+    documentUrls: [
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
       "Certificat de cession",
-      "Pièce d'identité",
-      "Justificatif de domicile",
+      "Carte grise",
+      "Kbis (si professionnel)",
+      "Pièce d'identité (si nouveau client)",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "DÉCLARATION VENTE": {
     id: "declaration-vente",
     name: "Déclaration de vente",
     description: "Enregistrement d'une vente de véhicule",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/5-Documents-declaration-vente.pdf",
+    documentUrls: [
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
       "Certificat de cession",
       "Carte grise",
-      "Pièce d'identité",
+      "Kbis (si professionnel)",
+      "Pièce d'identité (si nouveau client)",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "DEMANDE DE DUPLICATA": {
     id: "duplicata",
     name: "Demande de duplicata",
     description: "Remplacement d'une carte grise perdue ou volée",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/6-Demande-duplicata.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //Déclaration de perte/vol Cerfa 13753-04
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13753-04.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Déclaration de perte/vol",
+      "Déclaration de perte/vol Cerfa 13753-04",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
+      "CT de moins de 6 mois (si véhicule > 4 ans)",
       "Pièce d'identité",
-      "Justificatif de domicile",
+      "Justificatif de domicile moins 6 mois",
+      "Permis de conduire",
     ],
   },
   "DEMANDE DE CORRECTION": {
     id: "correction",
     name: "Demande de correction",
     description: "Modification des informations sur la carte grise",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/10-Changement-donnees-perso.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Carte grise originale",
-      "Justificatif de correction",
+      "Carte grise barrée",
       "Pièce d'identité",
+      "Permis de conduire",
+      "CT de moins de 6 mois",
+      "Justificatif de domicile moins 6 mois",
+      "Justificatif de demande de correction",
+      "Assurance au nom de demandeur",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
     ],
   },
   "CHANGEMENT ADRESSE": {
     id: "changement-adresse",
     name: "Changement d'adresse",
     description: "Mise à jour de l'adresse sur la carte grise",
-    documentUrl:
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/10-Changement-donnees-perso.pdf",
+    documentUrls: [
+      //Demande d'immatriculation
+      {
+        name: "Demande d'immatriculation - Cerfa 13750-05",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
+      },
+
+      //MANDAT
+      {
+        name: "Mandat - Cerfa 13757-03",
+        link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
+      },
+    ],
     requiredDocuments: [
-      "Justificatif de domicile",
-      "Carte grise",
+      "Carte grise barrée",
       "Pièce d'identité",
+      "Permis de conduire",
+      "CT de moins de 6 mois",
+      "Justificatif de domicile moins 6 mois",
+      "Assurance au nom de demandeur",
+      "Demande d'immatriculation - Cerfa 13750-05",
+      "Mandat - Cerfa 13757-03",
     ],
   },
 };
