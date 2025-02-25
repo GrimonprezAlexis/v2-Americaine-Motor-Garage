@@ -44,6 +44,7 @@ export interface VehicleInfo {
 export interface RegistrationService {
   id: string;
   name: string;
+  tarif: string;
   description: string;
   documentUrls: documentUrl[];
   requiredDocuments: string[];
@@ -59,6 +60,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "changement-titulaire",
     name: "Changement de titulaire",
     description: "Transfert de propriété d'un véhicule",
+    tarif: "29,99€",
     documentUrls: [
       //Demande d'immatriculation
       {
@@ -87,6 +89,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
   "PREMIÈRE IMMATRICULATION FRANCAISE": {
     id: "premiere-immat",
     name: "Première immatriculation française",
+    tarif: "39,99€",
     description: "Immatriculation d'un véhicule importé",
     documentUrls: [
       //Demande d'immatriculation
@@ -119,6 +122,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "ww",
     name: "Immatriculation provisoire WW",
     description: "Plaque temporaire pour export",
+    tarif: "34,99€",
     documentUrls: [
       //Demande d'immatriculation
       {
@@ -150,6 +154,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "declaration-achat",
     name: "Déclaration d'achat",
     description: "Enregistrement d'un achat de véhicule",
+    tarif: "14,99€",
     documentUrls: [
       //MANDAT
       {
@@ -169,6 +174,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "declaration-vente",
     name: "Déclaration de vente",
     description: "Enregistrement d'une vente de véhicule",
+    tarif: "14,99€",
     documentUrls: [
       //MANDAT
       {
@@ -188,6 +194,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "duplicata",
     name: "Demande de duplicata",
     description: "Remplacement d'une carte grise perdue ou volée",
+    tarif: "39,99€",
     documentUrls: [
       //Demande d'immatriculation
       {
@@ -221,6 +228,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "correction",
     name: "Demande de correction",
     description: "Modification des informations sur la carte grise",
+    tarif: "39,99€",
     documentUrls: [
       //Demande d'immatriculation
       {
@@ -250,6 +258,7 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     id: "changement-adresse",
     name: "Changement d'adresse",
     description: "Mise à jour de l'adresse sur la carte grise",
+    tarif: "19,99€",
     documentUrls: [
       //Demande d'immatriculation
       {

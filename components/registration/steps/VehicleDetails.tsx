@@ -4,10 +4,11 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Car, ArrowRight, ArrowLeft, Loader2 } from "lucide-react";
+import { Car, ArrowRight, ArrowLeft, Loader2, Info } from "lucide-react";
 import { calculateRegistrationCost } from "@/lib/api/registration";
 import { RegistrationResponse } from "@/types/registration";
 import { VehicleInfo } from "@/components/registration/vehicle/VehicleInfo";
+import { REGISTRATION_SERVICES } from "@/types/registration";
 
 interface VehicleDetailsProps {
   formData: any;
@@ -15,8 +16,6 @@ interface VehicleDetailsProps {
   onNext: () => void;
   onBack: () => void;
 }
-
-const SERVICE_FEE = 29.99;
 
 export function VehicleDetails({
   formData,
@@ -28,6 +27,13 @@ export function VehicleDetails({
   const [loading, setLoading] = useState(false);
   const [vehicleData, setVehicleData] = useState<RegistrationResponse | null>(
     null
+  );
+
+  // Vérifier si c'est un changement de titulaire
+  const isOwnershipTransfer = formData.service === "CHANGEMENT DE TITULAIRE";
+  const selectedService = REGISTRATION_SERVICES[formData.service];
+  const serviceFee = parseFloat(
+    selectedService.tarif.replace("€", "").replace(",", ".")
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -54,8 +60,6 @@ export function VehicleDetails({
         ...formData,
         vehicleInfo: response.data.vehicle,
         price: totalPrice,
-        serviceFee: SERVICE_FEE,
-        totalAmount: totalPrice + SERVICE_FEE,
         make: response.data.vehicle.AWN_marque,
         model: response.data.vehicle.AWN_modele,
         registration: response.data.vehicle.AWN_immat,
@@ -71,6 +75,59 @@ export function VehicleDetails({
       setLoading(false);
     }
   };
+
+  // Si ce n'est pas un changement de titulaire, passer directement à l'étape suivante
+  if (!isOwnershipTransfer) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="space-y-8"
+      >
+        <div className="text-center">
+          <Car className="w-12 h-12 mx-auto text-blue-500 mb-4" />
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Détails du véhicule
+          </h2>
+          <p className="text-gray-400 mb-2">
+            Cette démarche ne nécessite pas de calcul de carte grise
+          </p>
+          <div className="flex items-center justify-center gap-2 text-blue-400">
+            <Info className="w-5 h-5" />
+            <p>Frais de service : {selectedService.tarif}</p>
+          </div>
+        </div>
+
+        <div className="flex justify-between gap-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={onBack}
+            className="flex-1 bg-gray-800 hover:bg-gray-700"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Retour
+          </Button>
+          <Button
+            type="button"
+            onClick={() => {
+              onUpdate({
+                ...formData,
+                price: 0, // Pas de taxe carte grise
+                serviceFee: serviceFee,
+                totalAmount: serviceFee,
+              });
+              onNext();
+            }}
+            className="flex-1 bg-blue-600 hover:bg-blue-700"
+          >
+            Continuer
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </Button>
+        </div>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div
@@ -114,7 +171,7 @@ export function VehicleDetails({
           <VehicleInfo
             vehicle={vehicleData.data.vehicle}
             price={vehicleData.data.price.total}
-            serviceFee={SERVICE_FEE}
+            service={formData.service}
           />
         )}
 

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils/format";
+import { REGISTRATION_SERVICES } from "@/types/registration";
 
 interface SummaryProps {
   formData: any;
@@ -24,6 +25,11 @@ interface SummaryProps {
 export function Summary({ formData, onNext, onBack }: SummaryProps) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState("");
+
+  const selectedService = REGISTRATION_SERVICES[formData.service];
+  const serviceFee = parseFloat(
+    selectedService.tarif.replace("€", "").replace(",", ".")
+  );
 
   const handleSubmit = () => {
     if (!email.trim()) {
@@ -37,6 +43,8 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
       return;
     }
     formData.email = email;
+    formData.serviceFee = serviceFee;
+    formData.totalAmount = formData.price + serviceFee;
     onNext();
   };
 
@@ -115,14 +123,12 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Frais de service</span>
-              <span className="text-white">
-                {formatPrice(formData.serviceFee)}
-              </span>
+              <span className="text-white">{selectedService.tarif}</span>
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-gray-700">
               <span className="text-gray-300">Total TTC</span>
               <span className="text-2xl font-bold text-white">
-                {formatPrice(formData.totalAmount)}
+                {formatPrice(formData.price + serviceFee)}
               </span>
             </div>
           </div>

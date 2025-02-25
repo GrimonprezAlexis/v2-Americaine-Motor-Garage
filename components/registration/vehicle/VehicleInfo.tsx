@@ -4,14 +4,21 @@ import { motion } from "framer-motion";
 import { VehicleInfo as VehicleInfoType } from "@/types/registration";
 import { VehicleImage } from "./VehicleImage";
 import { formatPrice } from "@/lib/utils/format";
+import { REGISTRATION_SERVICES } from "@/types/registration";
 
 interface VehicleInfoProps {
   vehicle: VehicleInfoType;
   price: string | number;
-  serviceFee: number;
+  service: string;
 }
 
-export function VehicleInfo({ vehicle, price, serviceFee }: VehicleInfoProps) {
+export function VehicleInfo({ vehicle, price, service }: VehicleInfoProps) {
+  const selectedService = REGISTRATION_SERVICES[service];
+  const serviceFee = parseFloat(
+    selectedService.tarif.replace("€", "").replace(",", ".")
+  );
+  const totalPrice = Number(price) + serviceFee;
+
   const details = [
     {
       label: "Mise en circulation",
@@ -30,8 +37,6 @@ export function VehicleInfo({ vehicle, price, serviceFee }: VehicleInfoProps) {
       value: vehicle.AWN_energie,
     },
   ];
-
-  const totalPrice = Number(price) + serviceFee;
 
   return (
     <motion.div
@@ -73,7 +78,7 @@ export function VehicleInfo({ vehicle, price, serviceFee }: VehicleInfoProps) {
             </div>
             <div className="flex justify-between items-center">
               <p className="text-sm text-gray-400">Frais de service</p>
-              <p className="text-white">{formatPrice(serviceFee)}</p>
+              <p className="text-white">{selectedService.tarif}</p>
             </div>
             <div className="flex justify-between items-center pt-2 border-t border-gray-700">
               <p className="text-sm font-medium text-gray-300">
