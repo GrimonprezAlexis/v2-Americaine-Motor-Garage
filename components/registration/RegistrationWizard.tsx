@@ -8,9 +8,7 @@ import { DocumentUpload } from "./steps/DocumentUpload";
 import { Summary } from "./steps/Summary";
 import { Confirmation } from "./steps/Confirmation";
 import { ProgressSteps } from "./ProgressSteps";
-import { useAuthStore } from "@/store/authStore";
 import { useRegistrationStore } from "@/store/registrationStore";
-import { AuthRedirect } from "@/components/auth/AuthRedirect";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 const steps = [
@@ -22,7 +20,6 @@ const steps = [
 ];
 
 export function RegistrationWizard() {
-  const { user } = useAuthStore();
   const registration = useRegistrationStore();
   const [mounted, setMounted] = useState(false);
 
@@ -61,15 +58,6 @@ export function RegistrationWizard() {
 
   if (!mounted) {
     return null;
-  }
-
-  if (!user && registration.currentStep >= 2) {
-    return (
-      <AuthRedirect
-        message="Veuillez vous connecter pour continuer votre demande de carte grise"
-        returnPath="/services/carte-grise"
-      />
-    );
   }
 
   return (

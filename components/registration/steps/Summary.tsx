@@ -10,9 +10,10 @@ import {
   FileText,
   MapPin,
   Car,
-  Phone,
+  Mail,
 } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { formatPrice } from "@/lib/utils/format";
 
 interface SummaryProps {
   formData: any;
@@ -21,21 +22,21 @@ interface SummaryProps {
 }
 
 export function Summary({ formData, onNext, onBack }: SummaryProps) {
-  const [phone, setPhone] = useState(formData.phone || "");
+  const [email, setEmail] = useState("");
   const [error, setError] = useState("");
 
   const handleSubmit = () => {
-    if (!phone.trim()) {
-      setError("Le numéro de téléphone est obligatoire");
+    if (!email.trim()) {
+      setError("L'adresse email est obligatoire");
       return;
     }
-    // Valider le format du numéro de téléphone avec une regex simple
-    const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
-    if (!phoneRegex.test(phone)) {
-      setError("Le format du numéro de téléphone est invalide");
+    // Valider le format de l'email avec une regex simple
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      setError("L'adresse email n'est pas valide");
       return;
     }
-    formData.phone = phone;
+    formData.email = email;
     onNext();
   };
 
@@ -110,18 +111,18 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           <div className="space-y-2">
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Taxes et redevances</span>
-              <span className="text-white">{formData.price.toFixed(2)} €</span>
+              <span className="text-white">{formatPrice(formData.price)}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Frais de service</span>
               <span className="text-white">
-                {formData.serviceFee.toFixed(2)} €
+                {formatPrice(formData.serviceFee)}
               </span>
             </div>
             <div className="flex justify-between items-center pt-4 border-t border-gray-700">
               <span className="text-gray-300">Total TTC</span>
               <span className="text-2xl font-bold text-white">
-                {formData.totalAmount.toFixed(2)} €
+                {formatPrice(formData.totalAmount)}
               </span>
             </div>
           </div>
@@ -131,23 +132,24 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
 
         <div>
           <h3 className="text-lg font-medium text-white mb-4 flex items-center">
-            <Phone className="w-5 h-5 mr-2 text-blue-500" />
-            Numéro de téléphone
+            <Mail className="w-5 h-5 mr-2 text-blue-500" />
+            Email de contact
           </h3>
           <div className="space-y-4">
             <Input
-              type="tel"
-              placeholder="Votre numéro de téléphone"
-              value={phone}
+              type="email"
+              placeholder="Votre adresse email"
+              value={email}
               onChange={(e) => {
-                setPhone(e.target.value);
+                setEmail(e.target.value);
                 setError("");
               }}
               className="bg-gray-800 border-gray-700 text-white"
             />
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <p className="text-sm text-gray-400">
-              Format: +33612345678 ou 0612345678
+              Nous utiliserons cette adresse pour vous contacter concernant
+              votre demande
             </p>
           </div>
         </div>
