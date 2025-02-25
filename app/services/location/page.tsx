@@ -22,8 +22,9 @@ const vehicles = [
       "Vivez une expérience inoubliable à bord de ce véhicule emblématique, idéal pour sublimer votre mariage ou pour marquer un moment unique tel qu'une demande en mariage, un anniversaire, ou encore une escapade romantique.",
     images: [
       "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4976.JPG",
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4941.JPG",
       "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4942.JPG",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_2135.jpg",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_3783.jpg",
       "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4937.JPG",
       "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4959.JPG",
     ],
