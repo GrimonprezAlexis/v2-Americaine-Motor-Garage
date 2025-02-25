@@ -33,12 +33,12 @@ export default function ServicesPage() {
     },
     {
       title: "Location événement",
-      description: "À venir en 2025 - Location de véhicules d'exception",
+      description: "Location de véhicules d'exception",
       icon: <Calendar className="w-12 h-12" />,
       href: "/services/location",
       image:
-        "https://images.unsplash.com/photo-1605559424843-9e4c228bf1c2?auto=format&fit=crop&w=1200&q=80",
-      comingSoon: true,
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Images-services/location_bg.JPG",
+      comingSoon: false,
     },
   ];
 
