@@ -1,7 +1,15 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { Phone, Mail, MapPin, Clock, Instagram } from "lucide-react";
+import {
+  Phone,
+  Mail,
+  MapPin,
+  Clock,
+  Instagram,
+  Facebook,
+  Music2,
+} from "lucide-react";
 
 const contactInfo = [
   {
@@ -38,6 +46,18 @@ const contactInfo = [
     title: "Instagram",
     content: "@americaine.motor73",
     link: "https://www.instagram.com/americaine.motor73/",
+  },
+  {
+    icon: <Facebook className="w-6 h-6 text-blue-500" />,
+    title: "Facebook",
+    content: "@americaine.motor73",
+    link: "https://www.facebook.com/americaine.motor73",
+  },
+  {
+    icon: <Music2 className="w-6 h-6 text-blue-500" />,
+    title: "TikTok",
+    content: "@americaine.motor.garage",
+    link: "https://www.tiktok.com/@americaine.motor.garage",
   },
 ];
 

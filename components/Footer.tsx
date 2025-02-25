@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { Instagram, Facebook, Mail, Phone, MapPin } from "lucide-react";
+import { Instagram, Facebook, Mail, Phone, MapPin, Music2 } from "lucide-react";
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -100,10 +100,20 @@ export default function Footer() {
                 <Instagram className="w-6 h-6" />
               </Link>
               <Link
-                href="#"
+                href="https://www.facebook.com/americaine.motor73"
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-gray-400 hover:text-blue-500 transition-colors"
               >
                 <Facebook className="w-6 h-6" />
+              </Link>
+              <Link
+                href="https://www.tiktok.com/@americaine.motor.garage"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <Music2 className="w-6 h-6" />
               </Link>
             </div>
           </motion.div>

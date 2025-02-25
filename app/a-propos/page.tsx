@@ -52,8 +52,8 @@ export default function AboutPage() {
     },
     {
       icon: <Wrench className="w-12 h-12 text-blue-500" />,
-      title: "Expert multimarques Spécialisé en véhicules américains 🇺🇸",
-      description: "En véhicules américains",
+      title: "Expert multimarques",
+      description: "Spécialiste en véhicules américains 🇺🇸",
     },
     {
       icon: <Trophy className="w-12 h-12 text-blue-500" />,
