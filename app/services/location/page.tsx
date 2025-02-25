@@ -1,105 +1,112 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Car,
-  Calendar as CalendarIcon,
-  Clock,
-  Mail,
   Check,
-  ArrowRight,
+  ExternalLink,
+  Heart,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Image from "next/image";
-import confetti from "canvas-confetti";
+import Link from "next/link";
 
-interface RentalVehicle {
-  id: string;
-  name: string;
-  description: string;
-  image: string;
-  pricePerDay: number;
-  features: string[];
-}
-
-const vehicles: RentalVehicle[] = [
+const vehicles = [
   {
-    id: "1",
-    name: "Ford Mustang GT",
+    id: "mustang-1967",
+    name: "Ford Mustang 1967 V8 FASTBACK",
     description:
-      "Muscle car emblématique, parfaite pour vos événements spéciaux",
-    image:
-      "https://images.unsplash.com/photo-1584345604476-8ec5e12e42dd?auto=format&fit=crop&w=800&q=80",
-    pricePerDay: 350,
-    features: [
-      "Moteur V8 5.0L",
-      "460 chevaux",
-      "Boîte automatique",
-      "Intérieur cuir",
-      "Système audio premium",
+      "Vivez une expérience inoubliable à bord de ce véhicule emblématique, idéal pour sublimer votre mariage ou pour marquer un moment unique tel qu'une demande en mariage, un anniversaire, ou encore une escapade romantique.",
+    images: [
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4976.JPG",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4941.JPG",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4942.JPG",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4937.JPG",
+      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4959.JPG",
     ],
-  },
-  {
-    id: "2",
-    name: "Dodge Challenger",
-    description: "Puissance et style américain pour une expérience unique",
-    image:
-      "https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=800&q=80",
-    pricePerDay: 400,
     features: [
-      "Moteur HEMI V8",
-      "485 chevaux",
-      "Mode Sport",
-      "Sièges chauffants",
-      "Caméra de recul",
+      "Location avec chauffeur uniquement",
+      "Véhicule emblématique américain",
+      "Parfait pour les mariages et événements",
+      "Disponible sur Chambéry et Aix-les-Bains",
+    ],
+    packages: [
+      {
+        duration: "2h",
+        distance: "50 km",
+        price: "450",
+      },
+      {
+        duration: "3h",
+        distance: "80 km",
+        price: "550",
+      },
+      {
+        duration: "5h",
+        distance: "120 km",
+        price: "700",
+      },
+      {
+        duration: "6h",
+        distance: "150 km",
+        price: "850",
+      },
+    ],
+    extras: [
+      {
+        name: "Décoration Florale",
+        price: "à partir de 150€",
+        description: "Décoration personnalisée selon vos goûts",
+      },
+      {
+        name: "Champagne",
+        price: "à partir de 70€",
+        description: "Champagne de qualité avec deux coupes",
+      },
+      {
+        name: "Photographe",
+        price: "sur devis",
+        description: "Photographe professionnel pour immortaliser l'événement",
+      },
+      {
+        name: "Panier Garni",
+        price: "sur devis",
+        description: "Repas ou apéritif selon vos préférences",
+      },
     ],
   },
 ];
 
 export default function RentalPage() {
-  const [selectedVehicle, setSelectedVehicle] = useState<RentalVehicle | null>(
-    null
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const nextImage = useCallback(() => {
+    setCurrentImageIndex((prev) =>
+      prev === vehicles[0].images.length - 1 ? 0 : prev + 1
+    );
+  }, []);
+
+  const previousImage = useCallback(() => {
+    setCurrentImageIndex((prev) =>
+      prev === 0 ? vehicles[0].images.length - 1 : prev - 1
+    );
+  }, []);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") previousImage();
+      if (e.key === "ArrowRight") nextImage();
+    },
+    [nextImage, previousImage]
   );
-  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
-  const [showSuccess, setShowSuccess] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    message: "",
-  });
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedVehicle || !selectedDate) return;
-
-    // Trigger confetti effect
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
-
-    // Show success message
-    setShowSuccess(true);
-
-    // Reset form after delay
-    setTimeout(() => {
-      setSelectedVehicle(null);
-      setSelectedDate(undefined);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        message: "",
-      });
-      setShowSuccess(false);
-    }, 3000);
-  };
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [handleKeyDown]);
 
   return (
     <div className="min-h-screen bg-black pt-20">
@@ -114,243 +121,204 @@ export default function RentalPage() {
           <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
             Location Événementielle
           </h1>
-          <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
             Rendez votre événement inoubliable avec nos véhicules d'exception
           </p>
+          <Button
+            asChild
+            size="lg"
+            className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+          >
+            <Link
+              href="https://www.mariages.net/voiture-mariage/americaine-motor-garage--e376345"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Heart className="w-5 h-5 mr-2" />
+              Réserver sur Mariages.net
+            </Link>
+          </Button>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-          {/* Vehicles Section */}
-          <motion.section
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="space-y-8"
-          >
-            <h2 className="text-2xl font-bold text-white mb-6">
-              Nos Véhicules Disponibles
-            </h2>
-
-            <div className="grid gap-6">
-              {vehicles.map((vehicle) => (
-                <motion.div
-                  key={vehicle.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`bg-gray-900 rounded-xl overflow-hidden cursor-pointer transition-all
-                    ${
-                      selectedVehicle?.id === vehicle.id
-                        ? "ring-2 ring-blue-500"
-                        : "hover:bg-gray-800"
-                    }`}
-                  onClick={() => setSelectedVehicle(vehicle)}
-                >
-                  <div className="relative h-48 group">
+        {vehicles.map((vehicle) => (
+          <div key={vehicle.id} className="max-w-6xl mx-auto">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-12"
+            >
+              <div className="lg:col-span-8 relative aspect-[4/3] rounded-xl overflow-hidden group">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={currentImageIndex}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="absolute inset-0"
+                  >
                     <Image
-                      src={vehicle.image}
-                      alt={vehicle.name}
+                      src={vehicle.images[currentImageIndex]}
+                      alt={`${vehicle.name} - Vue ${currentImageIndex + 1}`}
                       fill
-                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                      className="object-cover transition-transform duration-700 group-hover:scale-110"
+                      priority
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-bold text-white mb-2">
-                      {vehicle.name}
-                    </h3>
-                    <p className="text-gray-400 mb-4">{vehicle.description}</p>
-                    <div className="space-y-2 mb-4">
-                      {vehicle.features.map((feature, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center text-gray-400"
-                        >
-                          <Check className="w-4 h-4 mr-2 text-blue-500" />
-                          {feature}
-                        </div>
-                      ))}
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <p className="text-2xl font-bold text-blue-400">
-                        {vehicle.pricePerDay}€
-                        <span className="text-sm text-gray-400 ml-1">
-                          / jour
-                        </span>
-                      </p>
-                      <Button
-                        variant="outline"
-                        className="bg-blue-500/10 hover:bg-blue-500/20 text-blue-400"
-                      >
-                        Sélectionner
-                        <ArrowRight className="w-4 h-4 ml-2" />
-                      </Button>
-                    </div>
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.section>
+                  </motion.div>
+                </AnimatePresence>
 
-          {/* Booking Form */}
-          <motion.section
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="lg:sticky lg:top-24 space-y-6"
-          >
-            <AnimatePresence mode="wait">
-              {showSuccess ? (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-green-500/10 border border-green-500/20 rounded-xl p-8 text-center"
-                >
-                  <Check className="w-16 h-16 text-green-500 mx-auto mb-4" />
-                  <h3 className="text-2xl font-bold text-white mb-2">
-                    Demande envoyée !
-                  </h3>
-                  <p className="text-gray-400">
-                    Nous vous contacterons rapidement pour confirmer votre
-                    réservation.
-                  </p>
-                </motion.div>
-              ) : (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  className="bg-gray-900 rounded-xl p-8"
-                >
-                  <h2 className="text-2xl font-bold text-white mb-6">
-                    Réserver un Véhicule
+                <div className="absolute inset-0 flex items-center justify-between p-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={previousImage}
+                    className="bg-black/50 hover:bg-black/70 text-white rounded-full transform -translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+                  >
+                    <ChevronLeft className="h-8 w-8" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={nextImage}
+                    className="bg-black/50 hover:bg-black/70 text-white rounded-full transform translate-x-2 group-hover:translate-x-0 transition-all duration-300"
+                  >
+                    <ChevronRight className="h-8 w-8" />
+                  </Button>
+                </div>
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              </div>
+
+              <div className="lg:col-span-4 grid grid-cols-2 gap-4">
+                {vehicle.images.map((image, index) => (
+                  <motion.button
+                    key={index}
+                    onClick={() => setCurrentImageIndex(index)}
+                    className={`relative aspect-square rounded-lg overflow-hidden group ${
+                      index === currentImageIndex ? "ring-2 ring-blue-500" : ""
+                    }`}
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    <Image
+                      src={image}
+                      alt={`${vehicle.name} - Miniature ${index + 1}`}
+                      fill
+                      className="object-cover"
+                    />
+                    <div
+                      className={`absolute inset-0 bg-black/50 transition-opacity duration-300 ${
+                        index === currentImageIndex
+                          ? "opacity-0"
+                          : "opacity-50 group-hover:opacity-30"
+                      }`}
+                    />
+                  </motion.button>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="grid md:grid-cols-2 gap-12 mb-12"
+            >
+              <div className="space-y-6">
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-4">
+                    {vehicle.name}
                   </h2>
+                  <p className="text-gray-400 text-lg">{vehicle.description}</p>
+                </div>
 
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    {/* Calendar */}
-                    <div className="bg-gray-800 rounded-xl p-4">
-                      <div className="flex items-center gap-2 mb-4">
-                        <CalendarIcon className="w-5 h-5 text-blue-500" />
-                        <h3 className="text-lg font-medium text-white">
-                          Date de location
-                        </h3>
-                      </div>
-                      <Calendar
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={setSelectedDate}
-                        className="bg-gray-800 text-white rounded-lg"
-                        disabled={(date) => date < new Date()}
-                      />
-                    </div>
-
-                    {/* Contact Information */}
-                    <div className="space-y-4">
-                      <Input
-                        placeholder="Nom complet"
-                        value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
-                        required
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                      <Input
-                        type="email"
-                        placeholder="Email"
-                        value={formData.email}
-                        onChange={(e) =>
-                          setFormData({ ...formData, email: e.target.value })
-                        }
-                        required
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                      <Input
-                        type="tel"
-                        placeholder="Téléphone"
-                        value={formData.phone}
-                        onChange={(e) =>
-                          setFormData({ ...formData, phone: e.target.value })
-                        }
-                        required
-                        className="bg-gray-800 border-gray-700 text-white"
-                      />
-                      <Textarea
-                        placeholder="Message (optionnel)"
-                        value={formData.message}
-                        onChange={(e) =>
-                          setFormData({ ...formData, message: e.target.value })
-                        }
-                        className="bg-gray-800 border-gray-700 text-white"
-                        rows={4}
-                      />
-                    </div>
-
-                    <Button
-                      type="submit"
-                      className="w-full bg-blue-600 hover:bg-blue-700 transition-all duration-300"
-                      disabled={!selectedVehicle || !selectedDate}
+                <div className="space-y-3">
+                  {vehicle.features.map((feature, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center text-gray-300"
                     >
-                      <Mail className="w-4 h-4 mr-2" />
-                      Envoyer la demande
-                    </Button>
-                  </form>
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.section>
-        </div>
+                      <Check className="w-5 h-5 mr-3 text-blue-500 flex-shrink-0" />
+                      {feature}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
-        {/* Additional Information */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="mt-16 bg-gray-900 rounded-xl p-8"
-        >
-          <Clock className="w-12 h-12 text-blue-500 mx-auto mb-6" />
-          <h2 className="text-2xl font-bold text-white mb-4 text-center">
-            Informations Importantes
-          </h2>
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
-                Conditions de Location
+              <div className="space-y-6">
+                <div>
+                  <h3 className="text-2xl font-bold text-white mb-4">
+                    Forfaits
+                  </h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {vehicle.packages.map((pkg, index) => (
+                      <div
+                        key={index}
+                        className="bg-gray-800/50 rounded-xl p-4 hover:bg-gray-800/70 transition-colors"
+                      >
+                        <div className="text-2xl font-bold text-blue-400 mb-2">
+                          {pkg.price}€
+                        </div>
+                        <div className="text-white">
+                          {pkg.duration} sur place
+                        </div>
+                        <div className="text-sm text-gray-400">
+                          Jusqu'à {pkg.distance}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-gray-900/50 rounded-2xl p-8 mb-12"
+            >
+              <h3 className="text-2xl font-bold text-white mb-6 text-center">
+                Services Additionnels
               </h3>
-              <ul className="space-y-2 text-gray-400">
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Location minimum 24 heures
-                </li>
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Caution requise
-                </li>
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Kilométrage limité inclus
-                </li>
-              </ul>
-            </div>
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">
-                Services Inclus
-              </h3>
-              <ul className="space-y-2 text-gray-400">
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Assurance tous risques
-                </li>
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Assistance 24/7
-                </li>
-                <li className="flex items-center">
-                  <Check className="w-4 h-4 mr-2 text-blue-500" />
-                  Livraison possible
-                </li>
-              </ul>
-            </div>
+              <div className="grid md:grid-cols-4 gap-6">
+                {vehicle.extras.map((extra, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-800/50 rounded-xl p-6 hover:bg-gray-800/70 transition-colors"
+                  >
+                    <div className="font-semibold text-white text-lg mb-2">
+                      {extra.name}
+                    </div>
+                    <div className="text-blue-400 mb-3">{extra.price}</div>
+                    <div className="text-sm text-gray-400">
+                      {extra.description}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-center"
+            >
+              <Button
+                asChild
+                size="lg"
+                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+              >
+                <Link
+                  href="https://www.mariages.net/voiture-mariage/americaine-motor-garage--e376345"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLink className="w-5 h-5 mr-2" />
+                  Réserver maintenant sur Mariages.net
+                </Link>
+              </Button>
+            </motion.div>
           </div>
-        </motion.section>
+        ))}
       </main>
     </div>
   );

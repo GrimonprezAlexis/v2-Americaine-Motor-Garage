@@ -249,10 +249,10 @@ export function DocumentUpload({
       (doc) => !uploadedFiles[doc] || uploadedFiles[doc].length === 0
     );
 
-    if (missingDocuments.length > 0) {
-      setError(`Documents manquants : ${missingDocuments.join(", ")}`);
-      return;
-    }
+    // if (missingDocuments.length > 0) {
+    //   setError(`Documents manquants : ${missingDocuments.join(", ")}`);
+    //   return;
+    // }
 
     onNext();
   };
