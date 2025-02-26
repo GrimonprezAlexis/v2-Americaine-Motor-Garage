@@ -21,7 +21,7 @@ export default function ServicesPage() {
       icon: <Wrench className="w-12 h-12" />,
       href: "/services/reparation",
       image:
-        "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1200&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Images-services/Reperation-entretien.jpg",
     },
     {
       title: "Vente / Importation",
@@ -29,7 +29,7 @@ export default function ServicesPage() {
       icon: <Car className="w-12 h-12" />,
       href: "/services/vente",
       image:
-        "https://images.unsplash.com/photo-1583121274602-3e2820c69888?auto=format&fit=crop&w=1200&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Images-services/Vente-Importation-2_bg.jpg",
     },
     {
       title: "Location événement",

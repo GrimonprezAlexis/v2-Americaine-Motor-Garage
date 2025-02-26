@@ -17,7 +17,8 @@ export default function Home() {
       description: "Notre histoire et notre équipe",
       href: "/a-propos",
       image:
-        "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Images-services/A-propos.jpg",
+      //"https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?auto=format&fit=crop&w=1000&q=80",
       //image: "@/img/IMG_1901.JPEG",
     },
     {
@@ -25,14 +26,14 @@ export default function Home() {
       description: "Nos prestations automobiles",
       href: "/services",
       image:
-        "https://images.unsplash.com/photo-1486262715619-67b85e0b08d3?auto=format&fit=crop&w=1000&q=80",
+        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=80",
     },
     {
       title: "Vente",
       description: "Importation et vente de véhicules",
       href: "/vente",
       image:
-        "https://images.unsplash.com/photo-1581092160562-40aa08e78837?auto=format&fit=crop&w=1000&q=80",
+        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Images-services/Vente_bg.jpg",
     },
     {
       title: "Contact",
