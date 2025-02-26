@@ -14,8 +14,16 @@ import {
   updateVehicle,
   uploadVehicleImage,
 } from "@/lib/api/vehicleStorage";
-import { X, Upload, Eye, Loader2, Image as ImageIcon } from "lucide-react";
+import {
+  X,
+  Upload,
+  Eye,
+  Loader2,
+  Image as ImageIcon,
+  Search,
+} from "lucide-react";
 import { VehiclePreview } from "./VehiclePreview";
+import { calculateRegistrationCost } from "@/lib/api/registration";
 import confetti from "canvas-confetti";
 
 interface VehicleFormProps {
@@ -35,7 +43,7 @@ export function VehicleForm({
       make: "",
       model: "",
       year: "",
-      price: "0",
+      price: "",
       mileage: "",
       fuel: "",
       transmission: "",
@@ -54,6 +62,9 @@ export function VehicleForm({
   const [uploadProgress, setUploadProgress] = useState<Record<string, number>>(
     {}
   );
+  const [plateNumber, setPlateNumber] = useState("");
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupError, setLookupError] = useState("");
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -117,6 +128,48 @@ export function VehicleForm({
     }
   };
 
+  const handleLookup = async () => {
+    if (!plateNumber.trim()) {
+      setLookupError("Veuillez saisir un numéro d'immatriculation");
+      return;
+    }
+
+    setLookupLoading(true);
+    setLookupError("");
+
+    try {
+      const response = await calculateRegistrationCost(
+        plateNumber,
+        "73000",
+        "1"
+      );
+      const vehicleInfo = response.data.vehicle;
+
+      setFormData((prev) => ({
+        ...prev,
+        make: vehicleInfo.AWN_marque,
+        model: vehicleInfo.AWN_modele,
+        year: vehicleInfo.AWN_date_mise_en_circulation.split("/")[2],
+        fuel: vehicleInfo.AWN_energie,
+        power: vehicleInfo.AWN_puissance_fiscale,
+        title: `${vehicleInfo.AWN_marque} ${vehicleInfo.AWN_modele} ${
+          vehicleInfo.AWN_date_mise_en_circulation.split("/")[2]
+        }`,
+      }));
+
+      confetti({
+        particleCount: 50,
+        spread: 30,
+        origin: { y: 0.6 },
+      });
+    } catch (error) {
+      console.error("Error looking up vehicle:", error);
+      setLookupError("Erreur lors de la recherche du véhicule");
+    } finally {
+      setLookupLoading(false);
+    }
+  };
+
   if (preview && formData) {
     return (
       <div className="bg-gray-900 rounded-xl p-8">
@@ -151,20 +204,50 @@ export function VehicleForm({
         </Button>
       </div>
 
+      {/* Lookup Section */}
+      <div className="space-y-4">
+        <Label htmlFor="plateNumber">Recherche par immatriculation</Label>
+        <div className="flex gap-4">
+          <div className="relative flex-1">
+            <div className="absolute inset-y-0 left-3 flex items-center pointer-events-none">
+              <span className="text-blue-500 font-bold">F</span>
+            </div>
+            <Input
+              id="plateNumber"
+              value={plateNumber}
+              onChange={(e) => setPlateNumber(e.target.value.toUpperCase())}
+              placeholder="AA-123-AA"
+              className="pl-8 bg-gray-800 border-gray-700 text-white uppercase"
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleLookup}
+            disabled={lookupLoading}
+            className="bg-blue-600 hover:bg-blue-700"
+          >
+            {lookupLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <Search className="w-4 h-4" />
+            )}
+          </Button>
+        </div>
+        {lookupError && <p className="text-sm text-red-500">{lookupError}</p>}
+      </div>
+
       <div className="grid grid-cols-2 gap-4">
         <Input
           placeholder="Titre"
           value={formData.title}
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
         <Input
           placeholder="Année"
           value={formData.year}
           onChange={(e) => setFormData({ ...formData, year: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
       </div>
 
@@ -174,14 +257,12 @@ export function VehicleForm({
           value={formData.make}
           onChange={(e) => setFormData({ ...formData, make: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
         <Input
           placeholder="Modèle"
           value={formData.model}
           onChange={(e) => setFormData({ ...formData, model: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
       </div>
 
@@ -191,7 +272,6 @@ export function VehicleForm({
           value={formData.price}
           onChange={(e) => setFormData({ ...formData, price: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
         <Input
           placeholder="Kilométrage"
@@ -200,7 +280,6 @@ export function VehicleForm({
             setFormData({ ...formData, mileage: e.target.value })
           }
           className="bg-gray-800 text-white"
-          required
         />
       </div>
 
@@ -210,7 +289,6 @@ export function VehicleForm({
           value={formData.fuel}
           onChange={(e) => setFormData({ ...formData, fuel: e.target.value })}
           className="bg-gray-800 text-white"
-          required
         />
         <Input
           placeholder="Transmission"
@@ -219,7 +297,6 @@ export function VehicleForm({
             setFormData({ ...formData, transmission: e.target.value })
           }
           className="bg-gray-800 text-white"
-          required
         />
       </div>
 
@@ -264,7 +341,6 @@ export function VehicleForm({
           setFormData({ ...formData, description: e.target.value })
         }
         className="bg-gray-800 text-white min-h-[100px]"
-        required
       />
 
       <div className="space-y-4">
