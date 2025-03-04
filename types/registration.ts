@@ -64,13 +64,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -94,13 +94,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -126,13 +126,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -152,13 +152,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
   },
   "DECLARATION ACHAT": {
     id: "declaration-achat",
-    name: "Déclaration d'achat",
+    name: "Déclaration d'achat (Uniquement pro)",
     description: "Enregistrement d'un achat de véhicule",
     tarif: "14,99€",
     documentUrls: [
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -178,14 +178,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
     requiredDocuments: [
       "Certificat de cession",
       "Carte grise",
-      "Kbis (si professionnel)",
       "Pièce d'identité (si nouveau client)",
       "Mandat - Cerfa 13757-03",
     ],
@@ -198,19 +197,19 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //Déclaration de perte/vol Cerfa 13753-04
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13753-04.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -232,13 +231,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
@@ -262,13 +261,13 @@ export const REGISTRATION_SERVICES: Record<string, RegistrationService> = {
     documentUrls: [
       //Demande d'immatriculation
       {
-        name: "Demande d'immatriculation - Cerfa 13750-05",
+        name: "Cerfa 13750-05 (Demande d'immatriculation)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13750-05.pdf",
       },
 
       //MANDAT
       {
-        name: "Mandat - Cerfa 13757-03",
+        name: "Cerfa 13757-03 (Mandat)",
         link: "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/registrations_documents/cerfa_13757-03.pdf",
       },
     ],
