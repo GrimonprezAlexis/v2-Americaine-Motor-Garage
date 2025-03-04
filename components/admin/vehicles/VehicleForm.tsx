@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { VehiclePreview } from "./VehiclePreview";
 import { calculateRegistrationCost } from "@/lib/api/registration";
+import { Alert } from "@/components/ui/alert";
 import confetti from "canvas-confetti";
 
 interface VehicleFormProps {
@@ -162,9 +163,12 @@ export function VehicleForm({
         spread: 30,
         origin: { y: 0.6 },
       });
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error looking up vehicle:", error);
-      setLookupError("Erreur lors de la recherche du véhicule");
+      setLookupError(
+        error.message ||
+          "Erreur lors de la recherche du véhicule. Veuillez réessayer."
+      );
     } finally {
       setLookupLoading(false);
     }
@@ -233,7 +237,11 @@ export function VehicleForm({
             )}
           </Button>
         </div>
-        {lookupError && <p className="text-sm text-red-500">{lookupError}</p>}
+        {lookupError && (
+          <Alert className="bg-red-500/10 text-red-500 border-red-500/50">
+            {lookupError}
+          </Alert>
+        )}
       </div>
 
       <div className="grid grid-cols-2 gap-4">

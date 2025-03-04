@@ -27,8 +27,8 @@ const contactInfo = [
   {
     icon: <MapPin className="w-6 h-6 text-blue-500" />,
     title: "Adresse",
-    content: "Route De Lyon, 850A D1006, 73160 Saint-Cassin, France",
-    link: "https://maps.google.com?Route De Lyon, 850A D1006, 73160 Saint-Cassin, France",
+    content: "850A, Route De Lyon - 73160 Saint-Cassin, France",
+    link: "https://www.google.com/maps/place/AMERICAINE+MOTOR+GARAGE/@45.543985,5.8775052,17z/data=!3m1!4b1!4m6!3m5!1s0x478ba9651ae91c6f:0x3bedbb672c34327b!8m2!3d45.543985!4d5.8800801!16s%2Fg%2F11jpkrx1l9?entry=ttu&g_ep=EgoyMDI1MDIyNi4xIKXMDSoASAFQAw%3D%3D",
   },
   {
     icon: <Clock className="w-6 h-6 text-blue-500" />,

@@ -9,6 +9,7 @@ import { calculateRegistrationCost } from "@/lib/api/registration";
 import { RegistrationResponse } from "@/types/registration";
 import { VehicleInfo } from "@/components/registration/vehicle/VehicleInfo";
 import { REGISTRATION_SERVICES } from "@/types/registration";
+import { Alert } from "@/components/ui/alert";
 
 interface VehicleDetailsProps {
   formData: any;
@@ -68,9 +69,12 @@ export function VehicleDetails({
         co2: response.data.vehicle.AWN_emission_co_2,
         energy: response.data.vehicle.AWN_energie,
       });
-    } catch (error) {
-      setError("Erreur lors de la récupération des informations du véhicule");
-      console.error(error);
+    } catch (error: any) {
+      console.error("Error fetching vehicle data:", error);
+      setError(
+        error.message ||
+          "Erreur lors de la récupération des informations du véhicule. Veuillez réessayer."
+      );
     } finally {
       setLoading(false);
     }
@@ -165,7 +169,11 @@ export function VehicleDetails({
           </div>
         </div>
 
-        {error && <p className="text-red-500 text-sm text-center">{error}</p>}
+        {error && (
+          <Alert className="bg-red-500/10 text-red-500 border-red-500/50">
+            {error}
+          </Alert>
+        )}
 
         {vehicleData && (
           <VehicleInfo

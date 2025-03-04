@@ -42,10 +42,8 @@ export default function Footer() {
               </p>
               <p className="flex items-center">
                 <MapPin className="w-4 h-4 mr-2" />
-                <Link
-                  href={"Route De Lyon, 850A D1006, 73160 Saint-Cassin, France"}
-                >
-                  Route De Lyon, 850A D1006, 73160 Saint-Cassin, France
+                <Link href={"850A, Route De Lyon - 73160 Saint-Cassin, France"}>
+                  850A, Route De Lyon - 73160 Saint-Cassin, France
                 </Link>
               </p>
             </div>
