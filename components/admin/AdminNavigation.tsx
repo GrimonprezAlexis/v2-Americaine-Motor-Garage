@@ -10,6 +10,7 @@ import {
   FileText,
   LayoutDashboard,
   ChevronLeft,
+  Calendar,
 } from "lucide-react";
 
 export function AdminNavigation() {
@@ -36,6 +37,11 @@ export function AdminNavigation() {
       label: "Carte Grise",
       icon: <FileText className="w-4 h-4" />,
       href: "/admin/carte-grise",
+    },
+    {
+      label: "Location",
+      icon: <Calendar className="w-4 h-4" />,
+      href: "/admin/location",
     },
   ];
 

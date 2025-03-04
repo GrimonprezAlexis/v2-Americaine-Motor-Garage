@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
-import { Car, Settings, Users, FileText } from "lucide-react";
+import { Car, Settings, Users, FileText, Calendar } from "lucide-react";
 import { AdminLogin } from "@/components/admin/AdminLogin";
 import { Button } from "@/components/ui/button";
 
@@ -30,6 +30,12 @@ export default function AdminPage() {
       icon: <FileText className="w-8 h-8 text-purple-500" />,
       href: "/admin/carte-grise",
     },
+    {
+      title: "Gestion Location",
+      description: "Gérer les véhicules de location",
+      icon: <Calendar className="w-8 h-8 text-yellow-500" />,
+      href: "/admin/location",
+    },
   ];
 
   if (!isAuthenticated) {
@@ -47,7 +53,7 @@ export default function AdminPage() {
         >
           <h1 className="text-3xl font-bold text-white mb-8">Administration</h1>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {adminSections.map((section, index) => (
               <motion.div
                 key={index}

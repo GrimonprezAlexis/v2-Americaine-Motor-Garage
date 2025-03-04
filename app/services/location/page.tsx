@@ -14,216 +14,60 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-const vehicles = [
-  {
-    id: "mustang-1967",
-    name: "Ford Mustang 1967 V8 FASTBACK",
-    description:
-      "Vivez une expérience inoubliable à bord de ce véhicule emblématique, idéal pour sublimer votre mariage ou pour marquer un moment unique tel qu'une demande en mariage, un anniversaire, ou encore une escapade romantique.",
-    images: [
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4976.JPG",
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4942.JPG",
-      "https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=1200&q=80",
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4937.JPG",
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_4959.JPG",
-    ],
-    features: [
-      "Location avec chauffeur uniquement",
-      "Véhicule emblématique américain",
-      "Parfait pour les mariages et événements",
-      "Disponible sur Chambéry et Aix-les-Bains",
-    ],
-    packages: [
-      {
-        duration: "2h",
-        distance: "50 km",
-        price: "450",
-      },
-      {
-        duration: "3h",
-        distance: "80 km",
-        price: "550",
-      },
-      {
-        duration: "5h",
-        distance: "120 km",
-        price: "700",
-      },
-      {
-        duration: "6h",
-        distance: "150 km",
-        price: "850",
-      },
-    ],
-    extras: [
-      {
-        name: "Décoration Florale",
-        price: "à partir de 150€",
-        description: "Décoration personnalisée selon vos goûts",
-      },
-      {
-        name: "Champagne",
-        price: "à partir de 70€",
-        description: "Champagne de qualité avec deux coupes",
-      },
-      {
-        name: "Photographe",
-        price: "sur devis",
-        description: "Photographe professionnel pour immortaliser l'événement",
-      },
-      {
-        name: "Panier Garni",
-        price: "sur devis",
-        description: "Repas ou apéritif selon vos préférences",
-      },
-    ],
-  },
-  {
-    id: "dodge-challenger",
-    name: "Dodge Challenger R/T 2023",
-    description:
-      "Ajoutez une touche de puissance et d'élégance à votre événement avec cette Dodge Challenger moderne. Son style musclé et son rugissement caractéristique ne laisseront personne indifférent lors de votre arrivée.",
-    images: [
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_3783.jpg", //Mustang rouge
-      "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&w=1200&q=80",
-    ],
-    features: [
-      "Location avec chauffeur uniquement",
-      "Moteur V8 puissant",
-      "Intérieur luxueux et confortable",
-      "Idéal pour les événements modernes",
-    ],
-    packages: [
-      {
-        duration: "2h",
-        distance: "50 km",
-        price: "500",
-      },
-      {
-        duration: "3h",
-        distance: "80 km",
-        price: "600",
-      },
-      {
-        duration: "5h",
-        distance: "120 km",
-        price: "750",
-      },
-      {
-        duration: "6h",
-        distance: "150 km",
-        price: "900",
-      },
-    ],
-    extras: [
-      {
-        name: "Décoration Florale",
-        price: "à partir de 150€",
-        description: "Décoration personnalisée selon vos goûts",
-      },
-      {
-        name: "Champagne",
-        price: "à partir de 70€",
-        description: "Champagne de qualité avec deux coupes",
-      },
-      {
-        name: "Photographe",
-        price: "sur devis",
-        description: "Photographe professionnel pour immortaliser l'événement",
-      },
-      {
-        name: "Panier Garni",
-        price: "sur devis",
-        description: "Repas ou apéritif selon vos préférences",
-      },
-    ],
-  },
-  {
-    id: "cadillac-eldorado",
-    name: "Cadillac Eldorado 1976",
-    description:
-      "Faites sensation avec cette Cadillac Eldorado, symbole du luxe américain des années 70. Sa silhouette imposante et son confort exceptionnel en font le véhicule parfait pour une arrivée remarquée lors de votre événement spécial.",
-    images: [
-      "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Locations/IMG_2135.jpg", //Police
-      "https://images.unsplash.com/photo-1567808291548-fc3ee04dbcf0?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1612544448445-b8232cff3b6c?auto=format&fit=crop&w=1200&q=80",
-      "https://images.unsplash.com/photo-1603553329474-99f95f35394f?auto=format&fit=crop&w=1200&q=80",
-    ],
-    features: [
-      "Location avec chauffeur uniquement",
-      "Intérieur cuir d'origine",
-      "Véhicule de collection",
-      "Parfait pour les mariages vintage",
-    ],
-    packages: [
-      {
-        duration: "2h",
-        distance: "50 km",
-        price: "480",
-      },
-      {
-        duration: "3h",
-        distance: "80 km",
-        price: "580",
-      },
-      {
-        duration: "5h",
-        distance: "120 km",
-        price: "730",
-      },
-      {
-        duration: "6h",
-        distance: "150 km",
-        price: "880",
-      },
-    ],
-    extras: [
-      {
-        name: "Décoration Florale",
-        price: "à partir de 150€",
-        description: "Décoration personnalisée selon vos goûts",
-      },
-      {
-        name: "Champagne",
-        price: "à partir de 70€",
-        description: "Champagne de qualité avec deux coupes",
-      },
-      {
-        name: "Photographe",
-        price: "sur devis",
-        description: "Photographe professionnel pour immortaliser l'événement",
-      },
-      {
-        name: "Panier Garni",
-        price: "sur devis",
-        description: "Repas ou apéritif selon vos préférences",
-      },
-    ],
-  },
-];
+import { fetchActiveRentalVehicles } from "@/lib/api/rentalStorage";
+import { RentalVehicle } from "@/types/rental";
+import { Loader2 } from "lucide-react";
 
 export default function RentalPage() {
-  const [activeVehicle, setActiveVehicle] = useState(vehicles[0].id);
+  const [vehicles, setVehicles] = useState<RentalVehicle[]>([]);
+  const [activeVehicle, setActiveVehicle] = useState<string | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [imageLoading, setImageLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    async function loadVehicles() {
+      try {
+        setLoading(true);
+        const data = await fetchActiveRentalVehicles();
+        setVehicles(data);
+
+        if (data.length > 0) {
+          setActiveVehicle(data[0].id);
+        }
+
+        setError(null);
+      } catch (err) {
+        console.error("Error loading rental vehicles:", err);
+        setError("Erreur lors du chargement des véhicules de location");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadVehicles();
+  }, []);
 
   // Reset image index when changing vehicle
   useEffect(() => {
     setCurrentImageIndex(0);
+    setImageLoading(true);
   }, [activeVehicle]);
 
-  const selectedVehicle =
-    vehicles.find((v) => v.id === activeVehicle) || vehicles[0];
+  const selectedVehicle = vehicles.find((v) => v.id === activeVehicle) || null;
 
   const nextImage = useCallback(() => {
+    if (!selectedVehicle) return;
+    setImageLoading(true);
     setCurrentImageIndex((prev) =>
       prev === selectedVehicle.images.length - 1 ? 0 : prev + 1
     );
   }, [selectedVehicle]);
 
   const previousImage = useCallback(() => {
+    if (!selectedVehicle) return;
+    setImageLoading(true);
     setCurrentImageIndex((prev) =>
       prev === 0 ? selectedVehicle.images.length - 1 : prev - 1
     );
@@ -241,6 +85,52 @@ export default function RentalPage() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
+
+  const handleImageLoad = () => {
+    setImageLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-black pt-20">
+        <main className="container mx-auto px-4 py-12">
+          <div className="flex justify-center items-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black pt-20">
+        <main className="container mx-auto px-4 py-12">
+          <div className="text-center py-20">
+            <p className="text-red-500">{error}</p>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  if (vehicles.length === 0) {
+    return (
+      <div className="min-h-screen bg-black pt-20">
+        <main className="container mx-auto px-4 py-12">
+          <div className="text-center py-20">
+            <Car className="w-16 h-16 text-blue-500 mx-auto mb-6" />
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Location Événementielle
+            </h1>
+            <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
+              Nos véhicules de location seront bientôt disponibles
+            </p>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black pt-20">
@@ -275,7 +165,7 @@ export default function RentalPage() {
         </motion.div>
 
         <Tabs
-          value={activeVehicle}
+          value={activeVehicle || ""}
           onValueChange={setActiveVehicle}
           className="mb-8"
         >
@@ -300,11 +190,16 @@ export default function RentalPage() {
                   className="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-12"
                 >
                   <div className="lg:col-span-8 relative aspect-[4/3] rounded-xl overflow-hidden group">
+                    {imageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center bg-gray-900">
+                        <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
+                      </div>
+                    )}
                     <AnimatePresence mode="wait">
                       <motion.div
                         key={`${vehicle.id}-${currentImageIndex}`}
                         initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
+                        animate={{ opacity: imageLoading ? 0 : 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         className="absolute inset-0"
@@ -315,6 +210,7 @@ export default function RentalPage() {
                           fill
                           className="object-cover transition-transform duration-700 group-hover:scale-110"
                           priority
+                          onLoad={handleImageLoad}
                         />
                       </motion.div>
                     </AnimatePresence>

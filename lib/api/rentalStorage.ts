@@ -1,4 +1,4 @@
-import { db, storage } from "@/lib/firebase/config";
+import { db } from "@/lib/firebase/config";
 import {
   collection,
   addDoc,
@@ -10,9 +10,13 @@ import {
   where,
   getDocs,
 } from "firebase/firestore";
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { uploadToS3 } from "./s3";
 import { RentalVehicle } from "@/types/rental";
 
+/**
+ * Récupère tous les véhicules de location
+ * @returns Liste des véhicules de location
+ */
 export async function fetchRentalVehicles(): Promise<RentalVehicle[]> {
   try {
     const q = query(collection(db, "rentalVehicles"), orderBy("order", "asc"));
@@ -23,11 +27,18 @@ export async function fetchRentalVehicles(): Promise<RentalVehicle[]> {
       ...doc.data(),
     })) as RentalVehicle[];
   } catch (error) {
-    console.error("Error fetching rental vehicles:", error);
+    console.error(
+      "Erreur lors de la récupération des véhicules de location:",
+      error
+    );
     throw error;
   }
 }
 
+/**
+ * Récupère uniquement les véhicules de location actifs
+ * @returns Liste des véhicules de location actifs
+ */
 export async function fetchActiveRentalVehicles(): Promise<RentalVehicle[]> {
   try {
     const q = query(
@@ -42,11 +53,19 @@ export async function fetchActiveRentalVehicles(): Promise<RentalVehicle[]> {
       ...doc.data(),
     })) as RentalVehicle[];
   } catch (error) {
-    console.error("Error fetching active rental vehicles:", error);
+    console.error(
+      "Erreur lors de la récupération des véhicules de location actifs:",
+      error
+    );
     throw error;
   }
 }
 
+/**
+ * Crée un nouveau véhicule de location
+ * @param data Données du véhicule
+ * @returns ID du véhicule créé
+ */
 export async function createRentalVehicle(
   data: Omit<RentalVehicle, "id">
 ): Promise<string> {
@@ -58,11 +77,16 @@ export async function createRentalVehicle(
     });
     return docRef.id;
   } catch (error) {
-    console.error("Error creating rental vehicle:", error);
+    console.error("Erreur lors de la création du véhicule de location:", error);
     throw error;
   }
 }
 
+/**
+ * Met à jour un véhicule de location existant
+ * @param id ID du véhicule
+ * @param data Données à mettre à jour
+ */
 export async function updateRentalVehicle(
   id: string,
   data: Partial<RentalVehicle>
@@ -74,30 +98,44 @@ export async function updateRentalVehicle(
       updatedAt: Date.now(),
     });
   } catch (error) {
-    console.error("Error updating rental vehicle:", error);
+    console.error(
+      "Erreur lors de la mise à jour du véhicule de location:",
+      error
+    );
     throw error;
   }
 }
 
+/**
+ * Supprime un véhicule de location
+ * @param id ID du véhicule à supprimer
+ */
 export async function deleteRentalVehicle(id: string): Promise<void> {
   try {
     await deleteDoc(doc(db, "rentalVehicles", id));
   } catch (error) {
-    console.error("Error deleting rental vehicle:", error);
+    console.error(
+      "Erreur lors de la suppression du véhicule de location:",
+      error
+    );
     throw error;
   }
 }
 
+/**
+ * Télécharge une image pour un véhicule de location vers S3
+ * @param file Fichier image à télécharger
+ * @returns URL de l'image téléchargée
+ */
 export async function uploadRentalVehicleImage(file: File): Promise<string> {
   try {
-    const timestamp = Date.now();
-    const fileName = `rental_vehicles/${timestamp}_${file.name}`;
-    const storageRef = ref(storage, fileName);
-
-    await uploadBytes(storageRef, file);
-    return getDownloadURL(storageRef);
+    // Utiliser uploadToS3 pour télécharger l'image vers S3
+    return await uploadToS3(file, "rental_vehicles");
   } catch (error) {
-    console.error("Error uploading rental vehicle image:", error);
+    console.error(
+      "Erreur lors du téléchargement de l'image du véhicule de location:",
+      error
+    );
     throw error;
   }
 }
