@@ -202,9 +202,15 @@ export function DocumentUpload({
           const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
           const filename = `${timestamp}-${uniqueId}-${safeFileName}`;
 
+          const plateNumber =
+            formData.plateNumber || formData.vehicleInfo?.AWN_immat;
+          if (!plateNumber) {
+            throw new Error("Numéro d'immatriculation non disponible");
+          }
+
           return await uploadToS3(
             file,
-            `temp-documents/${user?.uid}/${documentType}/${filename}`
+            `temp-documents/${plateNumber}/${documentType}/${filename}`
           );
         } catch (error: any) {
           console.error(`Error uploading file ${file.name}:`, error);

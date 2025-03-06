@@ -8,6 +8,7 @@ import { Alert } from "@/components/ui/alert";
 import { ServicePricingHeader } from "./ServicePricingHeader";
 import { useServicePricing } from "@/hooks/useServicePricing";
 import confetti from "canvas-confetti";
+import { SERVICE_CATEGORIES } from "@/types/service";
 
 interface ServicePricingTableProps {
   category: string;
@@ -38,12 +39,26 @@ export function ServicePricingTable({
   } = useServicePricing(category, subcategory);
 
   const onSuccessfulSave = async () => {
-    await handleSave();
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 },
-    });
+    try {
+      // Ensure subcategory is properly set for labor category
+      if (category === SERVICE_CATEGORIES.LABOR.id && !editForm.subcategory) {
+        const laborSubcategories = SERVICE_CATEGORIES.LABOR.subcategories;
+        // Set default subcategory for labor if not specified
+        setEditForm((prev) => ({
+          ...prev,
+          subcategory: subcategory || Object.keys(laborSubcategories)[0],
+        }));
+      }
+
+      await handleSave();
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 },
+      });
+    } catch (error) {
+      console.error("Error saving price:", error);
+    }
   };
 
   return (
@@ -60,7 +75,15 @@ export function ServicePricingTable({
         isEditing={!!editingId}
         onAdd={() => {
           setIsAdding(true);
-          setEditForm({});
+          // Initialize form with category and subcategory
+          setEditForm({
+            category,
+            subcategory:
+              subcategory ||
+              (category === SERVICE_CATEGORIES.LABOR.id
+                ? Object.keys(SERVICE_CATEGORIES.LABOR.subcategories)[0]
+                : undefined),
+          });
         }}
       />
 

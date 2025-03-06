@@ -178,10 +178,29 @@ export async function POST(request: Request) {
     // Prepare attachments
     const attachments: EmailAttachment[] = Object.entries(
       registration.documents
-    ).map(([type, url]) => ({
-      filename: `${type}.pdf`,
-      path: url,
-    }));
+    ).flatMap(([type, urls]) => {
+      if (!Array.isArray(urls)) {
+        console.error(`⚠️ Document "${type}" n'est pas un tableau:`, urls);
+        return [];
+      }
+
+      return urls
+        .map((url, index) => {
+          // Vérifiez si l'URL est valide avant de l'ajouter en pièce jointe
+          if (url && url.startsWith("https://")) {
+            return {
+              filename: `${type}_${index + 1}.pdf`, // Gère plusieurs fichiers
+              path: url,
+            };
+          } else {
+            console.error(`⚠️ URL invalide pour le document "${type}":`, url);
+            return null; // Ignore les URLs invalides
+          }
+        })
+        .filter(Boolean); // Filtrer les valeurs nulles
+    });
+
+    console.log("📎 Attachments à envoyer:", attachments);
 
     // Send admin email
     await transporter.sendMail({
