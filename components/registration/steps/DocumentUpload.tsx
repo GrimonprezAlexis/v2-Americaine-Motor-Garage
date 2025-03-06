@@ -204,6 +204,8 @@ export function DocumentUpload({
 
           const plateNumber =
             formData.plateNumber || formData.vehicleInfo?.AWN_immat;
+
+          console.log("plateNumber", plateNumber);
           if (!plateNumber) {
             throw new Error("Numéro d'immatriculation non disponible");
           }

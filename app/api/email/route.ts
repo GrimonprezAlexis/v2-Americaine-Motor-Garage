@@ -197,7 +197,9 @@ export async function POST(request: Request) {
             return null; // Ignore les URLs invalides
           }
         })
-        .filter(Boolean); // Filtrer les valeurs nulles
+        .filter(
+          (attachment): attachment is EmailAttachment => attachment !== null
+        ); // Filtrer les valeurs nulles
     });
 
     console.log("📎 Attachments à envoyer:", attachments);
