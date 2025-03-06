@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +14,6 @@ import {
   X,
 } from "lucide-react";
 import { useDropzone } from "react-dropzone";
-import {
-  uploadRegistrationDocument,
-  createRegistration,
-} from "@/lib/api/registrationStorage";
-import { useAuthStore } from "@/store/authStore";
 import { REGISTRATION_SERVICES } from "@/types/registration";
 import {
   Card,
@@ -138,8 +133,6 @@ export function DocumentUpload({
   onNext,
   onBack,
 }: DocumentUploadProps) {
-  const { user } = useAuthStore();
-  const [registrationId, setRegistrationId] = useState<string>("");
   const [uploadedFiles, setUploadedFiles] = useState<Record<string, string[]>>(
     formData.documents || {}
   );
@@ -151,37 +144,7 @@ export function DocumentUpload({
     [formData.service]
   );
 
-  // useEffect(() => {
-  //   async function initializeRegistration() {
-  //     if (!user) return;
-
-  //     try {
-  //       const id = await createRegistration(user.uid, {
-  //         service: formData.service,
-  //         vehicleInfo: formData.vehicleInfo,
-  //         price: formData.price,
-  //         serviceFee: formData.serviceFee,
-  //         documents: formData.documents,
-  //         userId: user.uid,
-  //       });
-  //       setRegistrationId(id);
-  //     } catch (error) {
-  //       console.error("Error creating registration:", error);
-  //       setError("Erreur lors de l'initialisation de la demande");
-  //     }
-  //   }
-
-  //   if (!registrationId) {
-  //     initializeRegistration();
-  //   }
-  // }, [user, formData, registrationId]);
-
   const handleDrop = async (documentType: string, acceptedFiles: File[]) => {
-    // if (!registrationId) {
-    //   setError("Erreur: ID de demande non disponible");
-    //   return;
-    // }
-
     setUploading(true);
     setError("");
 
@@ -195,25 +158,26 @@ export function DocumentUpload({
         );
       }
 
+      // Get plate number for folder structure
+      const plateNumber =
+        formData.plateNumber || formData.vehicleInfo?.AWN_immat;
+      if (!plateNumber) {
+        throw new Error("Numéro d'immatriculation non disponible");
+      }
+
+      // Clean document type for folder name
+      const safeDocType = documentType.replace(/[^a-z0-9]/gi, "_");
+
       const uploadPromises = acceptedFiles.map(async (file) => {
         try {
           const timestamp = Date.now();
           const uniqueId = Math.random().toString(36).substring(2, 15);
-          const safeFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
-          const filename = `${timestamp}-${uniqueId}-${safeFileName}`;
+          const safeFileName = file.name.replace(/[^a-z0-9.]/gi, "_");
 
-          const plateNumber =
-            formData.plateNumber || formData.vehicleInfo?.AWN_immat;
+          // Create a clean path structure
+          const path = `registrations/${plateNumber}/${safeDocType}/${timestamp}-${uniqueId}-${safeFileName}`;
 
-          console.log("plateNumber", plateNumber);
-          if (!plateNumber) {
-            throw new Error("Numéro d'immatriculation non disponible");
-          }
-
-          return await uploadToS3(
-            file,
-            `temp-documents/${plateNumber}/${documentType}/${filename}`
-          );
+          return await uploadToS3(file, path);
         } catch (error: any) {
           console.error(`Error uploading file ${file.name}:`, error);
           throw new Error(
@@ -257,21 +221,13 @@ export function DocumentUpload({
       (doc) => !uploadedFiles[doc] || uploadedFiles[doc].length === 0
     );
 
-    // if (missingDocuments.length > 0) {
-    //   setError(`Documents manquants : ${missingDocuments.join(", ")}`);
-    //   return;
-    // }
+    if (missingDocuments.length > 0) {
+      setError(`Documents manquants : ${missingDocuments.join(", ")}`);
+      return;
+    }
 
     onNext();
   };
-
-  // if (!registrationId) {
-  //   return (
-  //     <div className="flex justify-center items-center py-12">
-  //       <Loader2 className="w-8 h-8 animate-spin text-blue-500" />
-  //     </div>
-  //   );
-  // }
 
   return (
     <motion.div

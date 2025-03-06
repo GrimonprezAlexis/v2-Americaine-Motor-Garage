@@ -2,24 +2,27 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { RegistrationDocument } from "@/types/registration";
 import { formatPrice } from "@/lib/utils/format";
+import axios from "axios";
+import path from "path";
 
 // Create SMTP transporter for OVH
 const transporter = nodemailer.createTransport({
   host: process.env.NEXT_PUBLIC_SMTP_HOST,
-  port: 587, // Assure-toi que c'est bien 587 pour STARTTLS
-  secure: false, // `false` pour STARTTLS, `true` pour SSL (port 465)
+  port: 587, // Ensure that port 587 is used for STARTTLS
+  secure: false, // Use STARTTLS, not SSL
   auth: {
     user: process.env.NEXT_PUBLIC_SMTP_USER,
     pass: process.env.NEXT_PUBLIC_SMTP_PASS,
   },
   tls: {
-    rejectUnauthorized: false, // Ajoute ceci si OVH bloque encore
+    rejectUnauthorized: false, // Optional to bypass SSL issues if OVH has strict settings
   },
 });
 
 interface EmailAttachment {
   filename: string;
-  path: string;
+  content: Buffer;
+  contentType: string;
 }
 
 /**
@@ -153,15 +156,62 @@ function generateEmailTemplate(
   `;
 }
 
+/**
+ * Fetch file content and determine MIME type based on extension
+ */
+async function fetchFileContent(url: string): Promise<Buffer | null> {
+  try {
+    const response = await axios.get(url, { responseType: "arraybuffer" });
+    return Buffer.from(response.data); // Return Buffer directly
+  } catch (error) {
+    console.error(`Failed to fetch file from ${url}:`, error);
+    return null;
+  }
+}
+
+/**
+ * Determine MIME type based on file extension
+ */
+function getMimeType(filePath: string): string {
+  const extname = path.extname(filePath).toLowerCase();
+  switch (extname) {
+    case ".jpg":
+    case ".jpeg":
+      return "image/jpeg";
+    case ".png":
+      return "image/png";
+    case ".gif":
+      return "image/gif";
+    case ".pdf":
+      return "application/pdf";
+    case ".txt":
+      return "text/plain";
+    default:
+      return "application/octet-stream"; // Default for unknown file types
+  }
+}
+
+/**
+ * Get file name from URL and set the correct MIME type
+ */
+function getFileNameAndMimeType(url: string): {
+  filename: string;
+  contentType: string;
+} {
+  const fileName = path.basename(url);
+  const mimeType = getMimeType(url);
+  return { filename: fileName, contentType: mimeType };
+}
+
 export async function POST(request: Request) {
   try {
     const registration = (await request.json()) as RegistrationDocument;
 
     // Verify SMTP configuration
     if (
-      !process.env.NEXT_PUBLIC_SMTP_HOST ||
-      !process.env.NEXT_PUBLIC_SMTP_USER ||
-      !process.env.NEXT_PUBLIC_SMTP_PASS
+      !process.env.SMTP_HOST ||
+      !process.env.SMTP_USER ||
+      !process.env.SMTP_PASS
     ) {
       throw new Error("SMTP configuration is missing");
     }
@@ -176,37 +226,37 @@ export async function POST(request: Request) {
     }
 
     // Prepare attachments
-    const attachments: EmailAttachment[] = Object.entries(
-      registration.documents
-    ).flatMap(([type, urls]) => {
+    const attachments: EmailAttachment[] = [];
+    for (const [type, urls] of Object.entries(registration.documents)) {
       if (!Array.isArray(urls)) {
         console.error(`⚠️ Document "${type}" n'est pas un tableau:`, urls);
-        return [];
+        continue;
       }
 
-      return urls
-        .map((url, index) => {
-          // Vérifiez si l'URL est valide avant de l'ajouter en pièce jointe
-          if (url && url.startsWith("https://")) {
-            return {
-              filename: `${type}_${index + 1}.pdf`, // Gère plusieurs fichiers
-              path: url,
-            };
-          } else {
-            console.error(`⚠️ URL invalide pour le document "${type}":`, url);
-            return null; // Ignore les URLs invalides
+      for (let index = 0; index < urls.length; index++) {
+        const url = urls[index];
+        if (url && url.startsWith("https://")) {
+          const content = await fetchFileContent(url);
+          if (content) {
+            const { filename, contentType } = getFileNameAndMimeType(url);
+
+            attachments.push({
+              filename: filename, // Use filename from the URL
+              content: content, // Add the content as a Buffer
+              contentType: contentType, // Use appropriate MIME type
+            });
           }
-        })
-        .filter(
-          (attachment): attachment is EmailAttachment => attachment !== null
-        ); // Filtrer les valeurs nulles
-    });
+        } else {
+          console.error(`⚠️ URL invalide pour le document "${type}":`, url);
+        }
+      }
+    }
 
     console.log("📎 Attachments à envoyer:", attachments);
 
-    // Send admin email
+    // Send admin email with attachments
     await transporter.sendMail({
-      from: `Americaine Motor Garage <${process.env.NEXT_PUBLIC_SMTP_FROM}>`,
+      from: process.env.SMTP_FROM,
       to: process.env.SMTP_TO_ADMIN,
       subject: `Nouvelle demande carte grise - ${registration.vehicleInfo.AWN_marque} ${registration.vehicleInfo.AWN_modele}`,
       html: generateEmailTemplate(registration, true),
@@ -219,6 +269,7 @@ export async function POST(request: Request) {
       to: registration.email,
       subject: "Confirmation de votre demande de carte grise",
       html: generateEmailTemplate(registration, false),
+      attachments,
     });
 
     return NextResponse.json({ success: true });
