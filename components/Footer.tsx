@@ -124,6 +124,13 @@ export default function Footer() {
           className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400"
         >
           <p>© {currentYear} AMERICAINE MOTOR GARAGE. Tous droits réservés.</p>
+          <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+            <p>© {currentYear} Americaine Motor. Tous droits réservés.</p>
+            <span className="hidden md:inline">•</span>
+            <Link href="/mentions-legales" className="hover:text-blue-400">
+              Mentions légales
+            </Link>
+          </div>
         </motion.div>
       </div>
     </footer>
