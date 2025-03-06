@@ -24,8 +24,9 @@ export interface RegistrationDocument {
   price: number;
   serviceFee: number;
   documents: Record<string, string>;
-  phone: string; // Ajout du champ phone
+  phone: string;
   email: string;
+  postalCode: string;
   createdAt: number;
   updatedAt: number;
 }

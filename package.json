@@ -53,6 +53,7 @@
     "lucide-react": "^0.292.0",
     "next": "^13.5.1",
     "next-themes": "^0.2.1",
+    "nodemailer": "^6.10.0",
     "npm": "^10.9.1",
     "react": "18.2.0",
     "react-day-picker": "^9.4.1",
@@ -71,6 +72,7 @@
   "devDependencies": {
     "@types/canvas-confetti": "^1.6.4",
     "@types/node": "^20.9.0",
+    "@types/nodemailer": "^6.4.17",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "autoprefixer": "^10.4.16",

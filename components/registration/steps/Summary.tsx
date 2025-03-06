@@ -15,6 +15,7 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { formatPrice } from "@/lib/utils/format";
 import { REGISTRATION_SERVICES } from "@/types/registration";
+import { sendRegistrationEmails } from "@/lib/api/email";
 
 interface SummaryProps {
   formData: any;
@@ -24,14 +25,16 @@ interface SummaryProps {
 
 export function Summary({ formData, onNext, onBack }: SummaryProps) {
   const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
+  const [sending, setSending] = useState(false);
 
   const selectedService = REGISTRATION_SERVICES[formData.service];
   const serviceFee = parseFloat(
     selectedService.tarif.replace("€", "").replace(",", ".")
   );
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (!email.trim()) {
       setError("L'adresse email est obligatoire");
       return;
@@ -42,10 +45,37 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
       setError("L'adresse email n'est pas valide");
       return;
     }
-    formData.email = email;
-    formData.serviceFee = serviceFee;
-    formData.totalAmount = formData.price + serviceFee;
-    onNext();
+    // Valider le numéro de téléphone
+    if (!phone.trim()) {
+      setError("Le numéro de téléphone est obligatoire");
+      return;
+    }
+    const phoneRegex = /^(?:(?:\+|00)33|0)\s*[1-9](?:[\s.-]*\d{2}){4}$/;
+    if (!phoneRegex.test(phone)) {
+      setError("Le numéro de téléphone n'est pas valide");
+      return;
+    }
+
+    setSending(true);
+    try {
+      // Mettre à jour les données du formulaire
+      formData.email = email;
+      formData.phone = phone;
+      formData.serviceFee = serviceFee;
+      formData.totalAmount = formData.price + serviceFee;
+
+      // Envoyer les emails
+      await sendRegistrationEmails(formData);
+
+      onNext();
+    } catch (error) {
+      console.error("Error sending emails:", error);
+      setError(
+        "Une erreur est survenue lors de l'envoi de la demande. Veuillez réessayer."
+      );
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -139,23 +169,51 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
         <div>
           <h3 className="text-lg font-medium text-white mb-4 flex items-center">
             <Mail className="w-5 h-5 mr-2 text-blue-500" />
-            Email de contact
+            Coordonnées
           </h3>
           <div className="space-y-4">
-            <Input
-              type="email"
-              placeholder="Votre adresse email"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                setError("");
-              }}
-              className="bg-gray-800 border-gray-700 text-white"
-            />
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-400 mb-2"
+              >
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Votre adresse email"
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setError("");
+                }}
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="phone"
+                className="block text-sm font-medium text-gray-400 mb-2"
+              >
+                Téléphone
+              </label>
+              <Input
+                id="phone"
+                type="tel"
+                placeholder="Votre numéro de téléphone"
+                value={phone}
+                onChange={(e) => {
+                  setPhone(e.target.value);
+                  setError("");
+                }}
+                className="bg-gray-800 border-gray-700 text-white"
+              />
+            </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
             <p className="text-sm text-gray-400">
-              Nous utiliserons cette adresse pour vous contacter concernant
-              votre demande
+              Nous utiliserons cette adresse et ce numéro pour vous contacter
+              concernant votre demande
             </p>
           </div>
         </div>
@@ -167,6 +225,7 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
           variant="outline"
           onClick={onBack}
           className="flex-1 bg-gray-800 hover:bg-gray-700"
+          disabled={sending}
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Retour
@@ -174,9 +233,19 @@ export function Summary({ formData, onNext, onBack }: SummaryProps) {
         <Button
           onClick={handleSubmit}
           className="flex-1 bg-blue-600 hover:bg-blue-700"
+          disabled={sending}
         >
-          Envoyer la demande
-          <ArrowRight className="w-4 h-4 ml-2" />
+          {sending ? (
+            <>
+              <span className="w-4 h-4 mr-2 border-2 border-white border-t-transparent rounded-full animate-spin" />
+              Envoi en cours...
+            </>
+          ) : (
+            <>
+              Envoyer la demande
+              <ArrowRight className="w-4 h-4 ml-2" />
+            </>
+          )}
         </Button>
       </div>
     </motion.div>
