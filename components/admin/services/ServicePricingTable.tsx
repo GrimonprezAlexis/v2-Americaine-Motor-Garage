@@ -22,7 +22,7 @@ export function ServicePricingTable({
   title,
 }: ServicePricingTableProps) {
   const {
-    filteredPrices,
+    prices: filteredPrices,
     loading,
     error,
     editingId,
@@ -165,14 +165,14 @@ export function ServicePricingTable({
               </tr>
             )}
 
-            {loading && !filteredPrices.length ? (
+            {loading ? (
               <tr>
                 <td colSpan={4} className="py-8 text-center text-gray-400">
                   <Loader2 className="w-6 h-6 animate-spin mx-auto mb-2" />
                   Chargement des tarifs...
                 </td>
               </tr>
-            ) : !filteredPrices.length ? (
+            ) : filteredPrices && filteredPrices.length === 0 ? (
               <tr>
                 <td colSpan={4} className="py-8 text-center text-gray-400">
                   {searchTerm
@@ -181,7 +181,7 @@ export function ServicePricingTable({
                 </td>
               </tr>
             ) : (
-              filteredPrices.map((price) => (
+              filteredPrices?.map((price) => (
                 <tr key={price.id} className="border-b border-gray-800">
                   <td className="py-3 px-4 text-white">
                     {editingId === price.id ? (
