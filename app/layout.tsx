@@ -3,6 +3,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Navigation } from "@/components/Navigation";
 import "./globals.css";
 import Footer from "@/components/Footer";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "AMERICAINE MOTOR GARAGE - Spécialiste Véhicules Américains",
@@ -26,6 +27,8 @@ export default function RootLayout({
         >
           <Navigation />
           {children}
+          <Analytics />
+
           <Footer />
         </ThemeProvider>
       </body>
