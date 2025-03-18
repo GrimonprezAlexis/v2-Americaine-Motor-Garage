@@ -89,8 +89,8 @@ function generateEmailTemplate(data: any, isAdmin: boolean = false) {
         <div class="footer">
           <p>Americaine Motor - Spécialiste Véhicules Américains</p>
           <p>850A, Route De Lyon - 73160 Saint-Cassin, France</p>
-          <p>Tél: +33 4 13 33 39 84</p>
-          <a href="www.americaineimport.fr">www.AmericaineImport.fr</p>
+          <a href="++33 4 13 33 39 84" type="tel" id="phone" name="phone">Tél: +33 4 13 33 39 84</p>
+          <a href="www.americaineimport.fr" id="link">www.AmericaineImport.fr</p>
         </div>
       </body>
     </html>

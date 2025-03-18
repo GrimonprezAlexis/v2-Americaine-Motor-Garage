@@ -55,7 +55,8 @@ export function PricingSection() {
     ? allPrices.filter(
         (price) =>
           price.service.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          price.description?.toLowerCase().includes(searchTerm.toLowerCase())
+          price.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          price.subcategory?.toLowerCase().includes(searchTerm.toLowerCase())
       )
     : allPrices;
 
@@ -86,23 +87,7 @@ export function PricingSection() {
           <SearchResults prices={filteredPrices} searchTerm={searchTerm} />
         ) : (
           <div className="grid gap-8">
-            {Object.values(SERVICE_CATEGORIES).map((category) => {
-              const Icon =
-                categoryIcons[category.id as keyof typeof categoryIcons] || Car;
-              const categoryPrices = allPrices.filter(
-                (p) => p.category === category.id
-              );
-
-              return (
-                <ServiceCategory
-                  key={category.id}
-                  category={category}
-                  icon={<Icon className="w-6 h-6" />}
-                  prices={categoryPrices}
-                  loading={loading}
-                />
-              );
-            })}
+            <SearchResults prices={filteredPrices} searchTerm={searchTerm} />
           </div>
         )}
       </motion.div>
