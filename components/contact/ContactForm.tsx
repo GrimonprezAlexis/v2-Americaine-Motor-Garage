@@ -12,10 +12,15 @@ import { Mail, Phone, User, Send } from "lucide-react";
 import { Alert } from "@/components/ui/alert";
 
 export function ContactForm() {
-  const selectedVehicle = useContactStore((state) => state.selectedVehicle);
-  const clearSelectedVehicle = useContactStore(
-    (state) => state.clearSelectedVehicle
+  const { selectedVehicle, formData, setFormData, clearForm } = useContactStore(
+    (state) => ({
+      selectedVehicle: state.selectedVehicle,
+      formData: state.formData,
+      setFormData: state.setFormData,
+      clearForm: state.clearForm,
+    })
   );
+
   const quoteRequest = useRepairQuoteStore((state) => state.quoteRequest);
   const clearQuoteRequest = useRepairQuoteStore(
     (state) => state.clearQuoteRequest
@@ -25,22 +30,13 @@ export function ContactForm() {
     (state) => state.clearSearchRequest
   );
 
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    subject: "",
-    message: "",
-  });
-
   const [sending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (selectedVehicle) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         subject: `Demande d'information - ${selectedVehicle.make} ${selectedVehicle.model} ${selectedVehicle.year}`,
         message:
           `Je souhaite avoir plus d'informations concernant le véhicule suivant :\n\n` +
@@ -49,35 +45,33 @@ export function ContactForm() {
           `Kilométrage : ${selectedVehicle.mileage} km\n` +
           `Prix : ${selectedVehicle.price}\n\n` +
           `Merci de me recontacter pour plus d'informations.`,
-      }));
+      });
 
-      return () => clearSelectedVehicle();
+      return () => clearForm();
     }
-  }, [selectedVehicle, clearSelectedVehicle]);
+  }, [selectedVehicle, setFormData, clearForm]);
 
   useEffect(() => {
     if (quoteRequest) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         subject: quoteRequest.subject || "",
         message: quoteRequest.message || "",
-      }));
+      });
 
       return () => clearQuoteRequest();
     }
-  }, [quoteRequest, clearQuoteRequest]);
+  }, [quoteRequest, setFormData, clearQuoteRequest]);
 
   useEffect(() => {
     if (searchRequest) {
-      setFormData((prev) => ({
-        ...prev,
+      setFormData({
         subject: searchRequest.subject || "",
         message: searchRequest.message || "",
-      }));
+      });
 
       return () => clearSearchRequest();
     }
-  }, [searchRequest, clearSearchRequest]);
+  }, [searchRequest, setFormData, clearSearchRequest]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,22 +79,29 @@ export function ContactForm() {
     setError(null);
 
     try {
-      // Simulation d'envoi (à remplacer par votre logique d'envoi réelle)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
-
-      setSuccess(true);
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...formData,
+          selectedVehicle,
+        }),
       });
 
-      // Reset le succès après 3 secondes
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+
+      setSuccess(true);
+      clearForm();
+
+      // Reset success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError("Une erreur est survenue lors de l'envoi du message.");
+      console.error("Error sending message:", err);
     } finally {
       setSending(false);
     }
@@ -139,9 +140,7 @@ export function ContactForm() {
                 id="name"
                 type="text"
                 value={formData.name}
-                onChange={(e) =>
-                  setFormData({ ...formData, name: e.target.value })
-                }
+                onChange={(e) => setFormData({ name: e.target.value })}
                 className="pl-10 bg-gray-800 border-gray-700 text-white"
                 required
               />
@@ -160,9 +159,7 @@ export function ContactForm() {
                 id="email"
                 type="email"
                 value={formData.email}
-                onChange={(e) =>
-                  setFormData({ ...formData, email: e.target.value })
-                }
+                onChange={(e) => setFormData({ email: e.target.value })}
                 className="pl-10 bg-gray-800 border-gray-700 text-white"
                 required
               />
@@ -183,10 +180,9 @@ export function ContactForm() {
               id="phone"
               type="tel"
               value={formData.phone}
-              onChange={(e) =>
-                setFormData({ ...formData, phone: e.target.value })
-              }
+              onChange={(e) => setFormData({ phone: e.target.value })}
               className="pl-10 bg-gray-800 border-gray-700 text-white"
+              required
             />
           </div>
         </div>
@@ -202,9 +198,7 @@ export function ContactForm() {
             id="subject"
             type="text"
             value={formData.subject}
-            onChange={(e) =>
-              setFormData({ ...formData, subject: e.target.value })
-            }
+            onChange={(e) => setFormData({ subject: e.target.value })}
             className="bg-gray-800 border-gray-700 text-white"
             required
           />
@@ -220,9 +214,7 @@ export function ContactForm() {
           <Textarea
             id="message"
             value={formData.message}
-            onChange={(e) =>
-              setFormData({ ...formData, message: e.target.value })
-            }
+            onChange={(e) => setFormData({ message: e.target.value })}
             className="bg-gray-800 border-gray-700 text-white h-32"
             required
           />
