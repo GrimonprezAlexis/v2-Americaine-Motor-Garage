@@ -7,12 +7,6 @@ import { Users, Wrench, Trophy, Heart } from "lucide-react";
 export default function AboutPage() {
   const team = [
     {
-      name: "Andrey",
-      role: "Gérant Fondateur",
-      image:
-        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Andrey+-+Ge%CC%81rant+Fondateur.jpg",
-    },
-    {
       name: "Lauryn",
       role: "Co-Gérante",
       image:
