@@ -13,18 +13,6 @@ export default function AboutPage() {
         "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Lauryn+-+Co-Gerante.jpeg",
     },
     {
-      name: "Yuri",
-      role: "Chef Mécanicien",
-      image:
-        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Yuri+-+Chef+me%CC%81canicien.jpg",
-    },
-    {
-      name: "Kevin",
-      role: "Mécanicien",
-      image:
-        "https://americaine-motor-documents.s3.us-east-1.amazonaws.com/Personnel/Kevin+-+Mecanicien.jpg",
-    },
-    {
       name: "Jules",
       role: "Apprenti Mécanicien",
       image:
